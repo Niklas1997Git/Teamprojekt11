@@ -1,4 +1,4 @@
-package com.example.teamprojekt11;
+package com.example.teamprojekt;
 
 import org.junit.Test;
 
