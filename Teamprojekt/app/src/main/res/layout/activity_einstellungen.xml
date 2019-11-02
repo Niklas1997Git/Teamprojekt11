@@ -4,6 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EinstellungenActivity">
+    tools:context=".MainActivity">
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="200dp"
+        android:layout_height="63dp"
+        android:text="Daten hochladen"
+        tools:layout_editor_absoluteX="90dp"
+        tools:layout_editor_absoluteY="297dp" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="84dp"
+        android:layout_height="41dp"
+        android:ems="10"
+        android:inputType="number"
+        tools:layout_editor_absoluteX="152dp"
+        tools:layout_editor_absoluteY="426dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wie oft Bilder eingenommen werden :"
+        tools:layout_editor_absoluteX="87dp"
+        tools:layout_editor_absoluteY="400dp" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        tools:layout_editor_absoluteX="90dp"
+        tools:layout_editor_absoluteY="164dp" />
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        tools:layout_editor_absoluteX="90dp"
+        tools:layout_editor_absoluteY="209dp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="121dp"
+        android:layout_height="50dp"
+        android:text="Zugangsdaten"
+        tools:layout_editor_absoluteX="90dp"
+        tools:layout_editor_absoluteY="114dp" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="72dp"
+        android:layout_height="35dp"
+        tools:layout_editor_absoluteX="175dp"
+        tools:layout_editor_absoluteY="668dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
