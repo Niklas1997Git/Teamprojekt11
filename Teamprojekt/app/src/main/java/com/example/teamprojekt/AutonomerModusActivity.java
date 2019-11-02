@@ -10,5 +10,6 @@ public class AutonomerModusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autonomer_modus);
+        getSupportActionBar().setTitle("Autonomer Modus");
     }
 }

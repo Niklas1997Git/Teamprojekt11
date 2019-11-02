@@ -10,5 +10,6 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ferngesteuerter_modus);
+        getSupportActionBar().setTitle("Ferngesteuerter Modus");
     }
 }
