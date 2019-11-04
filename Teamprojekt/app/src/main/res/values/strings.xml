@@ -8,4 +8,9 @@
 
 
     <string name="backToInitMenu">Zurück</string>
+
+
+    <string name="Lenkwinkel">Lenkwinkel: </string>
+    <string name="Geschwindigkeit">Geschwindigkeit: </string>
+    <string name="Lenkrichtung">Lenkrichtung: </string>
 </resources>
