@@ -1,132 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FerngesteuerterModusActivity">
+    android:orientation="vertical"
+    >
+
+
 
     <SurfaceView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
         android:id="@+id/surfaceView"
-        android:layout_width="340dp"
-        android:layout_height="240dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.060000002" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="110dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="312dp"
-        android:layout_marginRight="312dp"
-        android:layout_marginBottom="411dp"
-        android:text="@string/Lenkwinkel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.078"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surfaceView"
-        app:layout_constraintVertical_bias="0.0" />
+        />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="110dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="411dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/surfaceView" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="110dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="37dp"
-        android:layout_marginLeft="37dp"
-        android:layout_marginEnd="264dp"
-        android:layout_marginRight="264dp"
-        android:text="@string/Geschwindigkeit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.051" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
 
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="110dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginLeft="76dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="77dp"
-        android:layout_marginRight="77dp"
-        android:layout_marginBottom="370dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView8"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
 
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="110dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="37dp"
-        android:layout_marginLeft="37dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="264dp"
-        android:layout_marginRight="264dp"
-        android:layout_marginBottom="330dp"
-        android:text="@string/Lenkrichtung"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Lenkwinkel"
+            />
 
-    <TextView
-        android:id="@+id/textView12"
-        android:layout_width="110dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="77dp"
-        android:layout_marginLeft="77dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="77dp"
-        android:layout_marginRight="77dp"
-        android:layout_marginBottom="329dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView10"
-        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Geschwindigkeit" />
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="334dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="127dp"
-        android:layout_marginBottom="132dp"
-        android:text="@string/btn_bilderaufnahme_text"
-        android:background="@drawable/option_button"
-        android:textColor="@color/whiteColor"
-        style="@style/btn_style"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Lenkrichtung" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="334dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="127dp"
+            android:layout_marginBottom="132dp"
+            android:text="@string/btn_bilderaufnahme_text"
+            android:background="@drawable/option_button"
+            android:textColor="@color/whiteColor"
+            style="@style/btn_style" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
+
