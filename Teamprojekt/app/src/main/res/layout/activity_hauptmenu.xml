@@ -52,36 +52,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/option_button"
                 android:onClick="zuFerngesteuerterModus"
                 android:text="@string/btn_fernsteuern"
-                android:textColor="@color/whiteColor"
-                android:textSize="20sp" />
+                style="@style/btn_style" />
 
             <Button
                 android:id="@+id/btn_autonom_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/option_button"
                 android:onClick="zuAutonomerModus"
                 android:text="@string/btn_autonom"
-                android:textColor="@color/whiteColor"
-                android:textSize="20sp" />
+                style="@style/btn_style" />
 
             <Button
                 android:id="@+id/btn_einstellung_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/option_button"
                 android:onClick="zuEinstellungen"
                 android:text="@string/btn_einstellung"
-                android:textColor="@color/whiteColor"
-                android:textSize="20sp" />
+                style="@style/btn_style" />
 
         </LinearLayout>
 

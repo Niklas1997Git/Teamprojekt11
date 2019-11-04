@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:gravity="center">
 
     <Switch
         android:id="@+id/switch1"
         android:layout_width="200dp"
         android:layout_height="63dp"
-        android:text="Daten hochladen"
-        tools:layout_editor_absoluteX="90dp"
-        tools:layout_editor_absoluteY="297dp" />
+        android:text="@string/upload_data_text"
+         />
 
     <EditText
         android:id="@+id/editText"
@@ -20,16 +18,14 @@
         android:layout_height="41dp"
         android:ems="10"
         android:inputType="number"
-        tools:layout_editor_absoluteX="152dp"
-        tools:layout_editor_absoluteY="426dp" />
+         />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wie oft Bilder eingenommen werden :"
-        tools:layout_editor_absoluteX="87dp"
-        tools:layout_editor_absoluteY="400dp" />
+        android:text="@string/anzahlBilder"
+        />
 
     <EditText
         android:id="@+id/editText2"
@@ -37,8 +33,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textEmailAddress"
-        tools:layout_editor_absoluteX="90dp"
-        tools:layout_editor_absoluteY="164dp" />
+        />
 
     <EditText
         android:id="@+id/editText3"
@@ -46,22 +41,19 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="90dp"
-        tools:layout_editor_absoluteY="209dp" />
+        />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="121dp"
         android:layout_height="50dp"
-        android:text="Zugangsdaten"
-        tools:layout_editor_absoluteX="90dp"
-        tools:layout_editor_absoluteY="114dp" />
+        android:text="@string/zugangsdata_text"
+         />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="72dp"
         android:layout_height="35dp"
-        tools:layout_editor_absoluteX="175dp"
-        tools:layout_editor_absoluteY="668dp" />
+        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

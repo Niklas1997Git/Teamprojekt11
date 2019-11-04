@@ -1,4 +1,6 @@
 <resources>
+
+    <!--HAUPTMENU STRINGS-->
     <string name="app_name">Hauptmenu</string>
     <string name="intro_text">AppName</string>
     <string name="btn_fernsteuern">Fernsteuern</string>
@@ -10,7 +12,17 @@
     <string name="backToInitMenu">Zurück</string>
 
 
+    <!--FERNSTEURN-->
     <string name="Lenkwinkel">Lenkwinkel: </string>
     <string name="Geschwindigkeit">Geschwindigkeit: </string>
     <string name="Lenkrichtung">Lenkrichtung: </string>
+
+    <!--EINSTELLUNG-->
+    <string name="upload_data_text">Daten hochladen</string>
+    <string name="anzahlBilder">Wie oft Bilder eingenommen werden :</string>
+    <string name="zugangsdata_text">Zugangsdaten</string>
+
+    <!--FERGESTEURT-->
+    <string name="btn_bilderaufnahme_text">Bilder aufnehmen</string>
+
 </resources>
