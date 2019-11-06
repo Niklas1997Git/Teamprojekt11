@@ -6,38 +6,25 @@
     >
 
 
-
-    <SurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:id="@+id/surfaceView"
-
-        />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="731dp"
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="343dp">
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Lenkwinkel"
-            />
+            android:layout_marginTop="20dp"
+            android:text="@string/Lenkwinkel" />
 
         <TextView
             android:id="@+id/textView9"
@@ -51,19 +38,25 @@
             android:layout_height="wrap_content"
             android:text="@string/Lenkrichtung" />
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
         <Button
             android:id="@+id/button4"
+            style="@style/btn_style"
             android:layout_width="334dp"
             android:layout_height="70dp"
-            android:layout_marginTop="127dp"
+            android:layout_marginTop="50dp"
             android:layout_marginBottom="132dp"
-            android:text="@string/btn_bilderaufnahme_text"
             android:background="@drawable/option_button"
-            android:textColor="@color/whiteColor"
-            style="@style/btn_style" />
+            android:onClick="toggleAufnahme"
+            android:text="@string/btn_bilderaufnahme_text"
+            android:textColor="@color/whiteColor" />
 
     </LinearLayout>
-
 
 
 </LinearLayout>
