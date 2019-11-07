@@ -18,9 +18,9 @@
     <string name="Lenkrichtung">Lenkrichtung: </string>
 
     <!--EINSTELLUNG-->
-    <string name="upload_data_text">Daten hochladen</string>
-    <string name="anzahlBilder">Wie oft Bilder eingenommen werden :</string>
-    <string name="zugangsdata_text">Zugangsdaten</string>
+    <string name="upload_data_text">Daten automatisch hochladen</string>
+    <string name="anzahlBilder">Wie oft die Sekunde sollen im autonomen Modus Bilder aufgenommen werden?</string>
+    <string name="zugangsdata_text">Zugangsdaten zu Google Drive: </string>
 
     <!--FERGESTEURT-->
     <string name="btn_bilderaufnahme_text">Bilder aufnehmen</string>
