@@ -10,14 +10,14 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class TakePictures {
+public class TakePicturesFerngesteuert {
 
 
     //https://www.youtube.com/watch?v=_wZvds9CfuE
 
     Camera camera;
 
-    public TakePictures(Camera camera){
+    public TakePicturesFerngesteuert(Camera camera){
         this.camera = camera;
     }
 

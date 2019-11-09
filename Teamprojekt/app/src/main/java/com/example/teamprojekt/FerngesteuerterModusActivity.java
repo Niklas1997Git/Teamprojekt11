@@ -4,17 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,7 +16,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     Camera camera;
     FrameLayout frameLayout;
     ShowCamera showCamera;
-    TakePictures takePictures;
+    TakePicturesFerngesteuert takePicturesFerngesteuert;
     boolean reihenAufnahme = false;
     TextView bilderAufnehmenText;
     @Override
@@ -37,13 +30,11 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
         //open Camera
         camera = Camera.open();
-        takePictures = new TakePictures(camera);
+        takePicturesFerngesteuert = new TakePicturesFerngesteuert(camera);
 
         //Preview wird angezeigt
         showCamera = new ShowCamera(this, camera);
         frameLayout.addView(showCamera);
-
-        //takePictures();
     }
 
 
@@ -56,10 +47,10 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             public void run()
             {
                 if(reihenAufnahme){
-                    takePictures.captureImage(frameLayout);
+                    takePicturesFerngesteuert.captureImage(frameLayout);
                 }
             }
-        }, 0, 1000l/22l);
+        }, 0, 1000l/10l);
     }
 
 

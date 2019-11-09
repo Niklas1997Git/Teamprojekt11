@@ -15,7 +15,7 @@ public class SaveClass implements Serializable {
     private boolean automatischHochladen;
     private String email;
     private String passwort;
-    private int nummer;
+    private int anzahlBilder;
 
     private SaveClass(){
     }
@@ -57,12 +57,12 @@ public class SaveClass implements Serializable {
         save(context);
     }
 
-    public int getNummer() {
-        return nummer;
+    public int getAnzahlBilder() {
+        return anzahlBilder;
     }
 
-    public void setNummer(int nummer, Context context) {
-        this.nummer = nummer;
+    public void setAnzahlBilder(int nummer, Context context) {
+        this.anzahlBilder = nummer;
         save(context);
     }
 
