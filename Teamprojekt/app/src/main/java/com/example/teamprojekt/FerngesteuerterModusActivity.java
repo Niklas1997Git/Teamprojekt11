@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class FerngesteuerterModusActivity extends AppCompatActivity {
 
@@ -22,7 +24,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     FrameLayout frameLayout;
     ShowCamera showCamera;
     TakePictures takePictures;
-    boolean aufnahme;
+    boolean reihenAufnahme = false;
     TextView bilderAufnehmenText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,32 +49,25 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
     private void takePictures(){
         //Wartet eine Sekunde bis der Code in run() wieder ausgeführt wird
-        /*
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    if(aufnahme){
-                    //nimmt Bild auf
-                        takePictures.captureImage(frameLayout);
-                    }
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                if(reihenAufnahme){
+                    takePictures.captureImage(frameLayout);
                 }
-            }, 1000);   // 1 seconds
-        */
-        takePictures.captureImage(frameLayout);
+            }
+        }, 0, 1000l/22l);
     }
 
 
     public void toggleAufnahme(View view){
+        //Schaltet die Reihenaufnahme ein oder aus
+        reihenAufnahme = !reihenAufnahme;
+        //Startet die Bildaufnahme
         takePictures();
-        /*
-        aufnahme = !aufnahme;
-        if(aufnahme){
-            bilderAufnehmenText.setText("Bilder werden aufgenommen");
-            takePictures();
-        }else{
-            bilderAufnehmenText.setText("Es werden keine Bilder aufgenommen");
-        }
-         */
     }
 
 

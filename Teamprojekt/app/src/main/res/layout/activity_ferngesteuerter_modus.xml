@@ -14,8 +14,8 @@
 
         <FrameLayout
             android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="343dp">
+            android:layout_width="240dp"
+            android:layout_height="320dp">
 
         </FrameLayout>
 
