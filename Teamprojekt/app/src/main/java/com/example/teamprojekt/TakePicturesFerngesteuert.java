@@ -53,7 +53,7 @@ public class TakePicturesFerngesteuert {
             return null;
         }else{
             //Ausgabe Order entspricht "GUI" im internen Speicher
-            File folder_gui = new File(Environment.getExternalStorageDirectory() +File.separator + "GUI");
+            File folder_gui = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "Bilder");
 
             if(!folder_gui.exists()){
                 folder_gui.mkdirs();
@@ -66,6 +66,7 @@ public class TakePicturesFerngesteuert {
              */
             Calendar kalender = Calendar.getInstance();
             SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss.SSS");
+            FerngesteuerterModusActivity.datei_name = datumsformat.format(kalender.getTime());
             File outputFile = new File(folder_gui,  datumsformat.format(kalender.getTime()) + ".jpg");
             return outputFile;
         }
