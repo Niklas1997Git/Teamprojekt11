@@ -55,6 +55,8 @@ public class TakePicturesAutonom {
     };
 
 
+
+
     private Bitmap cutOut(Bitmap origialBitmap) {
         //Bitmap origialBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.original);
 

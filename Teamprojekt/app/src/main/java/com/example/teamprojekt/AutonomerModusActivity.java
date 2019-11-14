@@ -2,6 +2,7 @@ package com.example.teamprojekt;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.View;
@@ -20,7 +21,10 @@ public class AutonomerModusActivity extends AppCompatActivity {
     private FrameLayout cameraBildFramelayout;
     public ImageView capturePreview;
     private TakePicturesAutonom takePicturesAutonom;
-    private boolean startStopFahren;
+    private boolean startStopFahren = false;
+    private int anzahlBilder;
+    private SaveClass saveClass;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +32,15 @@ public class AutonomerModusActivity extends AppCompatActivity {
         setContentView(R.layout.activity_autonomer_modus);
         getSupportActionBar().setTitle("Autonomer Modus");
 
+        context=this;
+        saveClass = SaveClass.getInstance(context);
+        anzahlBilder = saveClass.getAnzahlBilder();
+
         cameraBildFramelayout = findViewById((R.id.frameLayoutAutonom));
         capturePreview = findViewById(R.id.frameLayoutPreview);
         startStopButton = findViewById(R.id.buttonStartStop);
         startStopButton.setText("Start");
+
 
 
         //open Camera
@@ -69,6 +78,6 @@ public class AutonomerModusActivity extends AppCompatActivity {
                     takePicturesAutonom.captureImageAutonom(cameraBildFramelayout);
                 }
             }
-        }, 0, 1000l/10l);
+        }, 0, 1000l/ (long)anzahlBilder);
     }
 }
