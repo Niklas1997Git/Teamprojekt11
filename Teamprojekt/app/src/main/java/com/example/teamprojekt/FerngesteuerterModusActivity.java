@@ -26,6 +26,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     public static String datei_name;
     boolean reihenAufnahme = false;
     TextView bilderAufnehmenText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +46,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
 
-    private void takePictures(){
+    private void ferngesteuertesFahren(){
         //Wartet eine Sekunde bis der Code in run() wieder ausgeführt wird
         Timer timer = new Timer();
         timer.schedule(new TimerTask()
@@ -100,7 +101,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         //Schaltet die Reihenaufnahme ein oder aus
         reihenAufnahme = !reihenAufnahme;
         //Startet die Bildaufnahme
-        takePictures();
+        ferngesteuertesFahren();
     }
 
 

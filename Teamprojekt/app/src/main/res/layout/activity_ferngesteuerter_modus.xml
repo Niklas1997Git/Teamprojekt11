@@ -16,7 +16,6 @@
             android:id="@+id/frameLayout"
             android:layout_width="240dp"
             android:layout_height="320dp">
-
         </FrameLayout>
 
         <TextView
