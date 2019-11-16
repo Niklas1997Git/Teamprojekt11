@@ -1,14 +1,29 @@
 package com.example.teamprojekt;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Environment;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class TakePicturesFerngesteuert {
 
@@ -16,6 +31,8 @@ public class TakePicturesFerngesteuert {
     //https://www.youtube.com/watch?v=_wZvds9CfuE
 
     Camera camera;
+    SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss.SSSS");
+    Calendar kalender;
 
     public TakePicturesFerngesteuert(Camera camera){
         this.camera = camera;
@@ -33,7 +50,7 @@ public class TakePicturesFerngesteuert {
             }else{
                 try {
                     FileOutputStream fos = new FileOutputStream(picture_file);
-                    fos.write(data);
+                    fos.write(skalieren(data));
                     fos.close();
 
                     camera.startPreview();
@@ -64,12 +81,47 @@ public class TakePicturesFerngesteuert {
             Jedes Bild erhält als Kennung das Datum der Aufnahme und die Uhrzeit bis zu den Millisekunden,
             damit kein Bild überschrieben wird.
              */
-            Calendar kalender = Calendar.getInstance();
-            SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss.SSS");
+            kalender = Calendar.getInstance();
+
             FerngesteuerterModusActivity.datei_name = datumsformat.format(kalender.getTime());
             File outputFile = new File(folder_gui,  datumsformat.format(kalender.getTime()) + ".jpg");
             return outputFile;
         }
+    }
+
+
+    private byte[] skalieren(byte[] data){
+        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(zuschneiden(bmp), 60, 150, false);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        return stream.toByteArray();
+
+    }
+
+    private Bitmap zuschneiden(Bitmap origialBitmap) {
+        //Bitmap origialBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.original);
+
+        int zeileOben = 100;
+        int zeileUnten = 200;
+        assert (zeileOben>=0 && zeileOben<zeileUnten && zeileUnten<=origialBitmap.getWidth());
+        int spalteLinks = 200;
+        int spalteRechts = 100;
+        assert (spalteRechts>=0 && spalteRechts<spalteLinks && spalteLinks<=origialBitmap.getHeight());
+        Bitmap cutBitmap = Bitmap.createBitmap(origialBitmap.getWidth() / 2,
+                origialBitmap.getHeight() / 2, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(cutBitmap);
+        Rect desRect = new Rect(0, 0, origialBitmap.getWidth() / 2, origialBitmap.getHeight() / 2);
+
+        Rect srcRect = new Rect(zeileOben, spalteRechts,
+                zeileUnten,
+                spalteLinks);
+        canvas.drawBitmap(origialBitmap, srcRect, desRect, null);
+        return cutBitmap;
     }
 
 
@@ -79,4 +131,7 @@ public class TakePicturesFerngesteuert {
             camera.takePicture(null,null, mPictureCallback);
         }
     }
+
+
+
 }
