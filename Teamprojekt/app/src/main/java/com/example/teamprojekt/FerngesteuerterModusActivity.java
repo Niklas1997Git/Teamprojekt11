@@ -93,21 +93,21 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         }, 0, 1000l/10l);
 
 
-        /*
+
         new Handler().postDelayed(() -> zipFileAtPath(
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project",
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
 
-         */
+        
 
     }
 
     private synchronized void aufnahmen(){
-        //takePicturesFerngesteuert.captureImage(frameLayout);
+        takePicturesFerngesteuert.captureImage(frameLayout);
         System.out.println("Bild aufgenommen");
         String[] s = {"90", "50", "Time"};
-        //saveJSONFile(s[0], s[1], s[2]);
+        saveJSONFile(s[0], s[1], s[2]);
         System.out.println("JSON gespeichert");
     }
 
