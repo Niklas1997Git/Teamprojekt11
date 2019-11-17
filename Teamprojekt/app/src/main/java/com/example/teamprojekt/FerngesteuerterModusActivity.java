@@ -1,16 +1,14 @@
 package com.example.teamprojekt;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,20 +17,15 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 
 public class FerngesteuerterModusActivity extends AppCompatActivity {
 
@@ -43,21 +36,36 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     public static String datei_name = "";
     boolean reihenAufnahme = false;
     boolean abbrechen =false;
-    TextView bilderAufnehmenText;
 
-    private static final int BUFFER = 8192 ;
+    String lenkwinkel_string;
+    String geschwindigkeit_string;
+
+    TextView lenkwinkelText;
+    TextView geschwindigkeitText;
+    TextView lenkrichtungText;
+
+    Button bilderAufnehmenButton;
+
     int counter;
-    Calendar kalender = Calendar.getInstance();
-    SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss.SSS");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ferngesteuerter_modus);
-        getSupportActionBar().setTitle("Ferngesteuerter Modus");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Ferngesteuerter Modus");
 
-        bilderAufnehmenText = findViewById(R.id.textView3);
+        lenkwinkelText = findViewById(R.id.textView8);
+        geschwindigkeitText = findViewById(R.id.textView9);
+        lenkrichtungText = findViewById(R.id.textView10);
+
+        bilderAufnehmenButton = findViewById(R.id.button4);
+
         frameLayout = findViewById((R.id.frameLayout));
+
+        lenkwinkelText.setText(R.string.Lenkwinkel);
+        geschwindigkeitText.setText(R.string.Geschwindigkeit);
+        lenkrichtungText.setText(R.string.Lenkrichtung);
 
         //open Camera
         camera = Camera.open();
@@ -86,11 +94,12 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
                     if(abbrechen){
                         reihenAufnahme = false;
                         abbrechen = false;
+                        bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_start_text);
                         System.out.println("Aufnahme beenden");
                     }
                 }
             }
-        }, 0, 1000l/10l);
+        }, 0, 1000L / 10L);
 
 
         /*
@@ -98,9 +107,12 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project",
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
-
          */
 
+    }
+
+    private void setText(){
+        runOnUiThread(() -> updateWerte(lenkwinkel_string, geschwindigkeit_string));
     }
 
     private synchronized void aufnahmen(){
@@ -109,7 +121,25 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         String[] s = {"90", "50", "Time"};
         //saveJSONFile(s[0], s[1], s[2]);
         System.out.println("JSON gespeichert");
+        //updateWerte(s[0], s[1]);
+        lenkwinkel_string = s[0];
+        geschwindigkeit_string = s[1];
+        setText();
     }
+
+    private void updateWerte(String lenkwert, String geschwindigkeit){
+        lenkwinkelText.setText("Lenkwinkel: " + lenkwert);
+        geschwindigkeitText.setText("Geschwindigkeit: " + geschwindigkeit);
+        int winkel = Integer.parseInt(lenkwert);
+        if(winkel < 90){
+            lenkrichtungText.setText("Lenkrichtung: Links");
+        }else if(winkel > 90){
+            lenkrichtungText.setText("Lenkrichtung: Rechts");
+        }else{
+            lenkrichtungText.setText("Lenkrichtung: Geradeaus");
+        }
+    }
+
 
     private void saveJSONFile(String steering, String throttle, String timestamp) {
         JSONObject jsonObject = new JSONObject();
@@ -150,10 +180,12 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         if(reihenAufnahme){
             abbrechen=true;
             reihenAufnahme = false;
+            bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_start_text);
             System.out.println("Aufnahme abbrechen");
         }else{
             reihenAufnahme = true;
             abbrechen = false;
+            bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_stop_text);
             System.out.println("Aufnahme Beginn");
         }
         //Startet die Bildaufnahme
@@ -167,14 +199,14 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
         File sourceFile = new File(sourcePath);
         try {
-            BufferedInputStream origin = null;
+            BufferedInputStream origin;
             FileOutputStream dest = new FileOutputStream(toLocation);
             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
                     dest));
             if (sourceFile.isDirectory()) {
-                zipSubFolder(out, sourceFile, sourceFile.getParent().length());
+                zipSubFolder(out, sourceFile, Objects.requireNonNull(sourceFile.getParent()).length());
             } else {
-                byte data[] = new byte[BUFFER];
+                byte[] data = new byte[BUFFER];
                 FileInputStream fi = new FileInputStream(sourcePath);
                 origin = new BufferedInputStream(fi, BUFFER);
                 ZipEntry entry = new ZipEntry(getLastPathComponent(sourcePath));
@@ -200,25 +232,27 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         final int BUFFER = 2048;
 
         File[] fileList = folder.listFiles();
-        BufferedInputStream origin = null;
-        for (File file : fileList) {
-            if (file.isDirectory()) {
-                zipSubFolder(out, file, basePathLength);
-            } else {
-                byte data[] = new byte[BUFFER];
-                String unmodifiedFilePath = file.getPath();
-                String relativePath = unmodifiedFilePath
-                        .substring(basePathLength);
-                FileInputStream fi = new FileInputStream(unmodifiedFilePath);
-                origin = new BufferedInputStream(fi, BUFFER);
-                ZipEntry entry = new ZipEntry(relativePath);
-                entry.setTime(file.lastModified()); // to keep modification time after unzipping
-                out.putNextEntry(entry);
-                int count;
-                while ((count = origin.read(data, 0, BUFFER)) != -1) {
-                    out.write(data, 0, count);
+        BufferedInputStream origin;
+        if(fileList!=null){
+            for (File file : fileList) {
+                if (file.isDirectory()) {
+                    zipSubFolder(out, file, basePathLength);
+                } else {
+                    byte[] data = new byte[BUFFER];
+                    String unmodifiedFilePath = file.getPath();
+                    String relativePath = unmodifiedFilePath
+                            .substring(basePathLength);
+                    FileInputStream fi = new FileInputStream(unmodifiedFilePath);
+                    origin = new BufferedInputStream(fi, BUFFER);
+                    ZipEntry entry = new ZipEntry(relativePath);
+                    entry.setTime(file.lastModified()); // to keep modification time after unzipping
+                    out.putNextEntry(entry);
+                    int count;
+                    while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                        out.write(data, 0, count);
+                    }
+                    origin.close();
                 }
-                origin.close();
             }
         }
     }
@@ -227,8 +261,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         String[] segments = filePath.split("/");
         if (segments.length == 0)
             return "";
-        String lastPathComponent = segments[segments.length - 1];
-        return lastPathComponent;
+        return segments[segments.length - 1];
     }
 
     void DeleteRecursive(File dir)
@@ -252,7 +285,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
                     System.out.println("Delete File\"");
                     //Log.d("DeleteRecursive", "Delete File" + temp.getPath());
                     boolean b = temp.delete();
-                    if (b == false)
+                    if (!b)
                     {
                         System.out.println("DELETE FAIL");
                         //Log.d("DeleteRecursive", "DELETE FAIL");
