@@ -33,6 +33,7 @@ public class TakePicturesFerngesteuert {
     Camera camera;
     SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss.SSSS");
     Calendar kalender;
+    final File folder_gui = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "Bilder");
 
     public TakePicturesFerngesteuert(Camera camera){
         this.camera = camera;
@@ -52,7 +53,6 @@ public class TakePicturesFerngesteuert {
                     FileOutputStream fos = new FileOutputStream(picture_file);
                     fos.write(skalieren(data));
                     fos.close();
-
                     camera.startPreview();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -64,23 +64,23 @@ public class TakePicturesFerngesteuert {
     };
 
     //Erstellt eine Datei mit einem Ausgabepfad
+
     private File getOutputMediaFile(){
         String state = Environment.getExternalStorageState();
         if(!state.equals(Environment.MEDIA_MOUNTED)){
             return null;
         }else{
             //Ausgabe Order entspricht "GUI" im internen Speicher
-            File folder_gui = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "Bilder");
+
 
             if(!folder_gui.exists()){
                 folder_gui.mkdirs();
 
             }
 
-            /*
-            Jedes Bild erhält als Kennung das Datum der Aufnahme und die Uhrzeit bis zu den Millisekunden,
-            damit kein Bild überschrieben wird.
-             */
+            //Jedes Bild erhält als Kennung das Datum der Aufnahme und die Uhrzeit bis zu den Millisekunden,
+            //damit kein Bild überschrieben wird.
+
             kalender = Calendar.getInstance();
 
             FerngesteuerterModusActivity.datei_name = datumsformat.format(kalender.getTime());
@@ -90,9 +90,11 @@ public class TakePicturesFerngesteuert {
     }
 
 
+
+
     private byte[] skalieren(byte[] data){
         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(zuschneiden(bmp), 60, 150, false);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(zuschneiden(bmp), 50, 160, false);
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
         Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
@@ -128,7 +130,11 @@ public class TakePicturesFerngesteuert {
     //Methode für den Button zum auslösen
     public void captureImage(View v){
         if(camera !=null){
-            camera.takePicture(null,null, mPictureCallback);
+            try{
+                camera.takePicture(null,null, mPictureCallback);
+            }catch (RuntimeException e){
+
+            }
         }
     }
 
