@@ -49,12 +49,14 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
 
 
         //Sucht die kleinste Auflösung heraus und weist diese zu
+
         for(Camera.Size size : sizes){
             //System.out.println("Size width: "+ size.width +", Size height: " + size.height);
             if(size.width < mSize.width){
                 mSize = size;
             }
         }
+
 
         System.out.println("final Size : "+ mSize.width +" x " + mSize.height);
 
