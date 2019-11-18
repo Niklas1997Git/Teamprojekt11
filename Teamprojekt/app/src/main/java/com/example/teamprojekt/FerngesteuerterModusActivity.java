@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -29,6 +31,7 @@ import java.util.zip.ZipOutputStream;
 
 public class FerngesteuerterModusActivity extends AppCompatActivity {
 
+    private final int BOARD_PORT = 10001;
     Camera camera;
     FrameLayout frameLayout;
     ShowCamera showCamera;
@@ -46,7 +49,10 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
     Button bilderAufnehmenButton;
 
+    UDPClientListen clientListen;
+
     int counter;
+    final File folder_json = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "JSON");
 
 
     @Override
@@ -74,6 +80,8 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         //Preview wird angezeigt
         showCamera = new ShowCamera(this, camera);
         frameLayout.addView(showCamera);
+
+        clientListen = new UDPClientListen(BOARD_PORT);
     }
 
 
@@ -94,7 +102,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
                     if(abbrechen){
                         reihenAufnahme = false;
                         abbrechen = false;
-                        bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_start_text);
+                        //bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_start_text);
                         System.out.println("Aufnahme beenden");
                     }
                 }
@@ -102,12 +110,12 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         }, 0, 1000L / 10L);
 
 
-        /*
+
         new Handler().postDelayed(() -> zipFileAtPath(
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project",
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
-         */
+
 
     }
 
@@ -116,17 +124,26 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
     private synchronized void aufnahmen(){
-        //takePicturesFerngesteuert.captureImage(frameLayout);
+        takePicturesFerngesteuert.captureImage(frameLayout);
         System.out.println("Bild aufgenommen");
+        //Daten vom Board empfangen
+        clientListen.run();
+        //TODO UDP-Nachricht verarbeiten
+
+        //Teststring zur Erstellung einer json datei
         String[] s = {"90", "50", "Time"};
-        //saveJSONFile(s[0], s[1], s[2]);
+        //JSON-Datei erstellen und speichern
+        saveJSONFile(s[0], s[1], s[2]);
         System.out.println("JSON gespeichert");
         //updateWerte(s[0], s[1]);
+        //Texte Updaten
+        //TODO Ab und zu wird eine Exception geworfen
         lenkwinkel_string = s[0];
         geschwindigkeit_string = s[1];
         setText();
     }
 
+    //Updaten der Texte in der Szene
     private void updateWerte(String lenkwert, String geschwindigkeit){
         lenkwinkelText.setText("Lenkwinkel: " + lenkwert);
         geschwindigkeitText.setText("Geschwindigkeit: " + geschwindigkeit);
@@ -141,6 +158,8 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
 
+    //JSON Datei erstellen und speichern
+    //TODO eventuell anpassen, je nachdem welche Daten vom Board übergeben werden
     private void saveJSONFile(String steering, String throttle, String timestamp) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -155,14 +174,13 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         if(!state.equals(Environment.MEDIA_MOUNTED)){
             return;
         }else {
-            //Ausgabe Order entspricht "GUI" im internen Speicher
-            File folder_json = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "JSON");
-
+            //JSON Ordner erstellen, falls noch nicht vorhanden
             if (!folder_json.exists()) {
                 folder_json.mkdirs();
 
             }
             try {
+                //JSON-Datei speichern
                 File jsonFile = new File(folder_json, datei_name + ".json");
                 FileWriter fileWriter = new FileWriter(jsonFile);
                 fileWriter.write(jsonObject.toString());
@@ -175,6 +193,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
 
+    //Aufnahme starten oder beenden
     public void toggleAufnahme(View view){
         //Schaltet die Reihenaufnahme ein oder aus
         if(reihenAufnahme){
@@ -194,6 +213,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
 
 
+    //.Zip datei erstellen
     public boolean zipFileAtPath(String sourcePath, String toLocation) {
         final int BUFFER = 2048;
 
@@ -264,6 +284,8 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         return segments[segments.length - 1];
     }
 
+
+    //Ordner löschen
     void DeleteRecursive(File dir)
     {
         System.out.println("DELETEPREVIOUS TOP");
@@ -296,4 +318,6 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         }
         dir.delete();
     }
+
+
 }
