@@ -38,6 +38,9 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     TakePicturesFerngesteuert takePicturesFerngesteuert;
     public static String datei_name = "";
     boolean reihenAufnahme = false;
+
+    TextView bilderAufnehmenText;
+
     boolean abbrechen =false;
 
     String lenkwinkel_string;
@@ -53,6 +56,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
     int counter;
     final File folder_json = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "JSON");
+
 
 
     @Override
@@ -85,7 +89,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
 
-    private void takePictures(){
+    private void ferngesteuertesFahren(){
         //Wartet eine Sekunde bis der Code in run() wieder ausgeführt wird
         //FerngesteuerterModusActivity.datei_name = datumsformat.format(kalender.getTime());
 
@@ -208,7 +212,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             System.out.println("Aufnahme Beginn");
         }
         //Startet die Bildaufnahme
-        takePictures();
+        ferngesteuertesFahren();
     }
 
 
