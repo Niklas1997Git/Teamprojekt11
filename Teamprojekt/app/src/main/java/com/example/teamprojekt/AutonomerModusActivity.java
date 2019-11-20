@@ -37,7 +37,7 @@ public class AutonomerModusActivity extends AppCompatActivity {
         anzahlBilder = saveClass.getAnzahlBilder();
 
         cameraBildFramelayout = findViewById((R.id.frameLayoutAutonom));
-        capturePreview = findViewById(R.id.frameLayoutPreview);
+        //capturePreview = findViewById(R.id.);
         startStopButton = findViewById(R.id.buttonStartStop);
         startStopButton.setText("Start");
 

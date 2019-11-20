@@ -2,6 +2,7 @@ package com.example.teamprojekt;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -63,7 +64,9 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ferngesteuerter_modus);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Ferngesteuerter Modus");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Ferngesteuerter Modus");
+        }
 
         lenkwinkelText = findViewById(R.id.textView8);
         geschwindigkeitText = findViewById(R.id.textView9);

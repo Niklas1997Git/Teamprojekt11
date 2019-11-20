@@ -49,7 +49,7 @@ public class TakePicturesAutonom {
             //  draw source bitmap into resulting image at given position:
             new Canvas(resultBmp).drawBitmap(bmp, -rect.left, -rect.top, null);
              */
-            autonomerModus.capturePreview.setImageBitmap(rotatedBitmap);
+            //autonomerModus.capturePreview.setImageBitmap(rotatedBitmap);
             camera.startPreview();
         }
     };

@@ -2,64 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
+
 
 
     <FrameLayout
-        android:id="@+id/frameLayoutAutonom"
         android:layout_width="240dp"
         android:layout_height="320dp"
-        android:layout_marginTop="40dp">
-
-    </FrameLayout>
-
-    <ImageView
-        android:id="@+id/frameLayoutPreview"
-        android:layout_width="150dp"
-        android:layout_height="60dp">
-
-    </ImageView>
+        android:id="@+id/frameLayoutAutonom"
+        android:layout_marginTop="40dp"
+     />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:gravity="center"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/Lenkwinkel" />
+            android:text="@string/Lenkwinkel"
+            />
 
         <TextView
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text="@string/Geschwindigkeit" />
 
         <TextView
             android:id="@+id/textView10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text="@string/Lenkrichtung" />
 
         <Button
-            android:id="@+id/buttonStartStop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:id="@+id/buttonStartStop"
             android:background="@drawable/option_button"
             android:onClick="startStopFahren"
             android:text="Button" />
 
 
+
     </LinearLayout>
+
 
 
 </LinearLayout>
