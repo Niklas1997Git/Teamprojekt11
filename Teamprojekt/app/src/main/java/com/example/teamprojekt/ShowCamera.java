@@ -14,12 +14,14 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
     Camera camera;
     SurfaceHolder holder;
 
+    SaveClass saveClass;
+
     public ShowCamera(Context context, Camera camera) {
         super(context);
         this.camera = camera;
         holder = getHolder();
         holder.addCallback(this);
-
+        saveClass = SaveClass.getInstance(context);
     }
 
     @Override
@@ -50,15 +52,19 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
 
         //Sucht die kleinste Auflösung heraus und weist diese zu
 
+        mSize.width = saveClass.getAufloesung_breite();
+        mSize.height = saveClass.getAufloesung_hoehe();
+        /*
         for(Camera.Size size : sizes){
             //System.out.println("Size width: "+ size.width +", Size height: " + size.height);
-            if(size.width < mSize.width){
+            if(size.width == saveClass.getAufloesung_breite() && mSize.height == saveClass.getAufloesung_hoehe()){
                 mSize = size;
             }
         }
+        */
 
 
-        System.out.println("final Size : "+ mSize.width +" x " + mSize.height);
+        System.out.println("final Size : "+ saveClass.getAufloesung_breite() +" x " + saveClass.getAufloesung_hoehe());
 
         //Change orientation
         if(this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE){

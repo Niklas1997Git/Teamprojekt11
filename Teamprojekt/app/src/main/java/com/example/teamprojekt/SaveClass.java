@@ -2,6 +2,7 @@ package com.example.teamprojekt;
 
 import android.content.Context;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +17,18 @@ public class SaveClass implements Serializable {
     private String email;
     private String passwort;
     private int anzahlBilder;
+    private int aufloesung_breite;
+    private int aufloesung_hoehe;
+
+    public int getAufloesung_position() {
+        return aufloesung_position;
+    }
+
+    public void setAufloesung_position(int aufloesung_position) {
+        this.aufloesung_position = aufloesung_position;
+    }
+
+    private int aufloesung_position;
 
     private SaveClass(){
     }
@@ -66,10 +79,27 @@ public class SaveClass implements Serializable {
         save(context);
     }
 
+    public int getAufloesung_breite(){
+        return aufloesung_breite;
+    }
+
+    public void setAufloesung_breite(int breite){
+        aufloesung_breite = breite;
+    }
+
+    public  int getAufloesung_hoehe(){
+        return aufloesung_hoehe;
+    }
+
+    public void setAufloesung_hoehe(int hoehe){
+        aufloesung_hoehe = hoehe;
+    }
+
 
     public void save(Context context) {
         try {
             FileOutputStream fos = context.openFileOutput("settings", Context.MODE_PRIVATE);
+            //FileOutputStream fos = new FileOutputStream("settings");
             ObjectOutputStream os = new ObjectOutputStream(fos);
             os.writeObject(this);
             os.close();
@@ -83,16 +113,21 @@ public class SaveClass implements Serializable {
 
     private static SaveClass load(Context context){
         SaveClass saveClass =null;
-        try {
-            FileInputStream fileInputStream = context.openFileInput("settings");
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            saveClass = (SaveClass) objectInputStream.readObject();
+        File f = new File("settings");
+        if(f.isFile() && f.canRead()){
+            try {
+                //FileInputStream fileInputStream = context.openFileInput("settings");
+                FileInputStream fileInputStream = new FileInputStream(f);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                saveClass = (SaveClass) objectInputStream.readObject();
 
-            objectInputStream.close();
-            fileInputStream.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+                objectInputStream.close();
+                fileInputStream.close();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+
         return saveClass;
     }
 }
