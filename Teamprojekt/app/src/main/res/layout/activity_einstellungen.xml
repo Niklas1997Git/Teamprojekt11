@@ -67,29 +67,37 @@
             android:id="@+id/switch_Hochladen"
             android:layout_width="200dp"
             android:layout_height="63dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="@string/upload_data_text"
             android:textColor="@android:color/secondary_text_light" />
 
-        <TextView
-            android:id="@+id/textView_WelchesNN"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="TextView"
-            tools:text="@string/Welches_NN" />
 
-        <Spinner
-            android:id="@+id/spinner_NN"
-            android:layout_width="200dp"
+        <TextView
+            android:id="@+id/textView_aufloesung"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:text="@string/Welche_Aufloesung" />
+
+        <Spinner
+            android:id="@+id/spinner_aufloesung"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:spinnerMode="dialog" />
+
+        <TextView
+            android:id="@+id/textView_bildbereich"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="TextView"
+            tools:text="@string/Bildbereich" />
 
         <RelativeLayout
             android:layout_width="240dp"
             android:layout_height="320dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="30dp">
 
             <ImageView
@@ -110,20 +118,28 @@
                 android:id="@+id/imageView_lu"
                 android:layout_width="5dp"
                 android:layout_height="5dp"
-                app:srcCompat="@color/whiteColor" />
+                app:srcCompat="@android:color/holo_blue_bright" />
 
             <ImageView
                 android:id="@+id/imageView_ru"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
-                app:srcCompat="@android:color/holo_orange_dark" />
+                app:srcCompat="@android:color/holo_blue_bright" />
 
             <ImageView
                 android:id="@+id/imageView_ro"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
-                app:srcCompat="@android:color/holo_red_dark" />
+                app:srcCompat="@android:color/holo_blue_bright" />
         </RelativeLayout>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/option_button"
+            android:text="Button"
+            tools:text="@string/Bildbereich_Button" />
 
 
     </LinearLayout>

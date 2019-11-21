@@ -56,6 +56,11 @@ public class EinstellungenActivity extends AppCompatActivity {
     private final int MIN_TOP_MARGIN = 0;
     private final int STANDARD_MARGIN = 0;
 
+    private final int LEFT_LEFT_MARGIN = 60;
+    private final int RIGHT_LEFT_MARGIN = 380;
+    private final int TOP_TOP_MARGIN = 200;
+    private final int BOTTOM_TOP_MARGIN = 320;
+
 
     //Kamera-auflösungen für die Auswahl
     private String[] supportedCameraSizes;
@@ -78,7 +83,7 @@ public class EinstellungenActivity extends AppCompatActivity {
         passwort = findViewById(R.id.editText_Passwort);
         nummer = findViewById(R.id.textView_AnzahlBilder);
         anzahlBilder = findViewById(R.id.seekBar_AnzahlBilder);
-        cameraSizes = findViewById(R.id.spinner_NN);
+        cameraSizes = findViewById(R.id.spinner_aufloesung);
         customScrollView = findViewById(R.id.customScrollView);
 
 
@@ -135,32 +140,32 @@ public class EinstellungenActivity extends AppCompatActivity {
         //ImageView Startwerte setzen
         //Links oben
         RelativeLayout.LayoutParams lp_lo = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
-        lp_lo.leftMargin = MIN_LEFT_MARGIN;
-        lp_lo.topMargin = MIN_TOP_MARGIN;
+        lp_lo.leftMargin = LEFT_LEFT_MARGIN;
+        lp_lo.topMargin = TOP_TOP_MARGIN;
         lp_lo.rightMargin = STANDARD_MARGIN;
         lp_lo.bottomMargin = STANDARD_MARGIN;
         rechteckLinksOben.setLayoutParams(lp_lo);
 
         //Links unten
         RelativeLayout.LayoutParams lp_lu = (RelativeLayout.LayoutParams) rechteckLinksUnten.getLayoutParams();
-        lp_lu.leftMargin = MIN_LEFT_MARGIN;
-        lp_lu.topMargin = MAX_TOP_MARGIN;
+        lp_lu.leftMargin = LEFT_LEFT_MARGIN;
+        lp_lu.topMargin = BOTTOM_TOP_MARGIN;
         lp_lu.rightMargin = STANDARD_MARGIN;
         lp_lu.bottomMargin = STANDARD_MARGIN;
         rechteckLinksUnten.setLayoutParams(lp_lu);
 
         //Rechts unten
         RelativeLayout.LayoutParams lp_ru = (RelativeLayout.LayoutParams) rechteckRechtsUnten.getLayoutParams();
-        lp_ru.leftMargin = MAX_LEFT_MARGIN;
-        lp_ru.topMargin = MAX_TOP_MARGIN;
+        lp_ru.leftMargin = RIGHT_LEFT_MARGIN;
+        lp_ru.topMargin = BOTTOM_TOP_MARGIN;
         lp_ru.rightMargin = STANDARD_MARGIN;
         lp_ru.bottomMargin = STANDARD_MARGIN;
         rechteckRechtsUnten.setLayoutParams(lp_ru);
 
         //Rechts oben
         RelativeLayout.LayoutParams lp_ro = (RelativeLayout.LayoutParams) rechteckRechtsOben.getLayoutParams();
-        lp_ro.leftMargin = MAX_LEFT_MARGIN;
-        lp_ro.topMargin = MIN_TOP_MARGIN;
+        lp_ro.leftMargin = RIGHT_LEFT_MARGIN;
+        lp_ro.topMargin = TOP_TOP_MARGIN;
         lp_ro.rightMargin = STANDARD_MARGIN;
         lp_ro.bottomMargin = STANDARD_MARGIN;
         rechteckRechtsOben.setLayoutParams(lp_ro);
@@ -367,10 +372,94 @@ public class EinstellungenActivity extends AppCompatActivity {
                 rechteckRechtsUnten.setLayoutParams(lp2);
                 break;
         }
+        partnerDistanceControll(name);
     }
 
 
 
+    public void partnerDistanceControll(String name){
+        RelativeLayout.LayoutParams lp;
+        RelativeLayout.LayoutParams lp1;
+        RelativeLayout.LayoutParams lp2;
+
+        switch (name){
+            case "imageView_lo":
+                lp = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
+                lp1 = (RelativeLayout.LayoutParams) rechteckRechtsOben.getLayoutParams();
+                lp2 = (RelativeLayout.LayoutParams) rechteckLinksUnten.getLayoutParams();
+
+                if(lp2.topMargin-lp.topMargin<SQUARE_SIZE){
+                    lp.topMargin = lp2.topMargin-SQUARE_SIZE;
+                    lp1.topMargin = lp2.topMargin-SQUARE_SIZE;
+                }
+                if(lp1.leftMargin-lp.leftMargin<SQUARE_SIZE){
+                    lp.leftMargin = lp1.leftMargin-SQUARE_SIZE;
+                    lp2.leftMargin = lp1.leftMargin-SQUARE_SIZE;
+                }
+
+                rechteckLinksOben.setLayoutParams(lp);
+                rechteckRechtsOben.setLayoutParams(lp1);
+                rechteckLinksUnten.setLayoutParams(lp2);
+                break;
+            case "imageView_lu":
+                lp = (RelativeLayout.LayoutParams) rechteckLinksUnten.getLayoutParams();
+                lp1 = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
+                lp2 = (RelativeLayout.LayoutParams) rechteckRechtsUnten.getLayoutParams();
+
+                if(lp.topMargin - lp1.topMargin<SQUARE_SIZE){
+                    lp.topMargin = lp1.topMargin+SQUARE_SIZE;
+                    lp2.topMargin = lp.topMargin;
+                }
+
+                if(lp2.leftMargin-lp.leftMargin<SQUARE_SIZE){
+                    lp.leftMargin = lp2.leftMargin-SQUARE_SIZE;
+                    lp1.leftMargin = lp.leftMargin;
+                }
+
+                rechteckLinksUnten.setLayoutParams(lp);
+                rechteckLinksOben.setLayoutParams(lp1);
+                rechteckRechtsUnten.setLayoutParams(lp2);
+                break;
+            case "imageView_ru":
+                lp = (RelativeLayout.LayoutParams) rechteckRechtsUnten.getLayoutParams();
+                lp1 = (RelativeLayout.LayoutParams) rechteckLinksUnten.getLayoutParams();
+                lp2 = (RelativeLayout.LayoutParams) rechteckRechtsOben.getLayoutParams();
+
+                if(lp.topMargin-lp2.topMargin<SQUARE_SIZE){
+                    lp.topMargin = lp2.topMargin+SQUARE_SIZE;
+                    lp1.topMargin=lp.topMargin;
+                }
+
+                if(lp.leftMargin-lp1.leftMargin<SQUARE_SIZE){
+                    lp.leftMargin = lp1.leftMargin +SQUARE_SIZE;
+                    lp2.leftMargin = lp.leftMargin;
+                }
+
+                rechteckRechtsUnten.setLayoutParams(lp);
+                rechteckLinksUnten.setLayoutParams(lp1);
+                rechteckRechtsOben.setLayoutParams(lp2);
+                break;
+            case "imageView_ro":
+                lp = (RelativeLayout.LayoutParams) rechteckRechtsOben.getLayoutParams();
+                lp1 = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
+                lp2 = (RelativeLayout.LayoutParams) rechteckRechtsUnten.getLayoutParams();
+
+                if(lp2.topMargin-lp.topMargin<SQUARE_SIZE){
+                    lp.topMargin=lp2.topMargin-SQUARE_SIZE;
+                    lp1.topMargin=lp.topMargin;
+                }
+
+                if(lp.leftMargin-lp1.leftMargin<SQUARE_SIZE){
+                    lp.leftMargin = lp1.leftMargin+SQUARE_SIZE;
+                    lp2.leftMargin = lp.leftMargin;
+                }
+
+                rechteckRechtsOben.setLayoutParams(lp);
+                rechteckLinksOben.setLayoutParams(lp1);
+                rechteckRechtsUnten.setLayoutParams(lp2);
+                break;
+        }
+    }
 
 
 
