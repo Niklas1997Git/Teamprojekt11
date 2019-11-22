@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="TextView"
+            android:text="@string/Bildbereich"
             tools:text="@string/Bildbereich" />
 
         <RelativeLayout
@@ -134,11 +134,11 @@
         </RelativeLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/button_Bildbereich"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/option_button"
-            android:text="Button"
+            android:text="@string/Bildbereich_Button"
             tools:text="@string/Bildbereich_Button" />
 
 

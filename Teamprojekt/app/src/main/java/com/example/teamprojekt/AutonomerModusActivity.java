@@ -23,8 +23,11 @@ public class AutonomerModusActivity extends AppCompatActivity {
     private TakePicturesAutonom takePicturesAutonom;
     private boolean startStopFahren = false;
     private int anzahlBilder;
-    private SaveClass saveClass;
     Context context;
+
+
+    private final String prefName = "MyPref";
+    private final String pref_anzahlBilder = "anzahlBilder";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +36,8 @@ public class AutonomerModusActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Autonomer Modus");
 
         context=this;
-        saveClass = SaveClass.getInstance(context);
-        anzahlBilder = saveClass.getAnzahlBilder();
+        //TODO
+        anzahlBilder = this.getSharedPreferences(prefName, 0).getInt(pref_anzahlBilder, 10);
 
         cameraBildFramelayout = findViewById((R.id.frameLayoutAutonom));
         //capturePreview = findViewById(R.id.);

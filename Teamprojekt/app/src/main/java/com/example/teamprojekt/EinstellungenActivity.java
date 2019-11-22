@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,6 +38,7 @@ public class EinstellungenActivity extends AppCompatActivity {
     private SeekBar anzahlBilder;
     private Spinner cameraSizes;
     private CustomScrollView customScrollView;
+    private Button button_Bildbereich;
 
     //Rechteck deklarierung
     private ImageView rechteckLinksOben;
@@ -52,8 +55,6 @@ public class EinstellungenActivity extends AppCompatActivity {
     private final int SQUARE_SIZE=25;
     private final int MAX_LEFT_MARGIN = 480 - SQUARE_SIZE;
     private final int MAX_TOP_MARGIN = 640 - SQUARE_SIZE;
-    private final int MIN_LEFT_MARGIN = 0;
-    private final int MIN_TOP_MARGIN = 0;
     private final int STANDARD_MARGIN = 0;
 
     private final int LEFT_LEFT_MARGIN = 60;
@@ -61,12 +62,36 @@ public class EinstellungenActivity extends AppCompatActivity {
     private final int TOP_TOP_MARGIN = 200;
     private final int BOTTOM_TOP_MARGIN = 320;
 
+    //SharedPreferences Konstanten
+    private final String prefName = "MyPref";
+    private final String pref_automatischHochladen = "hochladen";
+    private final String pref_email = "email";
+    private final String pref_passwort = "passwort";
+    private final String pref_anzahlBilder = "anzahlBilder";
+    private final String pref_aufloesung_breite = "breite";
+    private final String pref_aufloesung_hoehe = "hoehe";
+    private final String pref_aufloesung_position = "position";
+    private final String pref_left_faktor = "left_faktor";
+    private final String pref_top_faktor = "top_faktor";
+
+    //TODO
+    private final String pref_lo_left = "lo_left";
+    private final String pref_lo_top = "lo_top";
+    private final String pref_lu_left = "lu_left";
+    private final String pref_lu_top = "lu_top";
+    private final String pref_ru_left = "ru_left";
+    private final String pref_ru_top = "ru_top";
+    private final String pref_ro_left = "ro_left";
+    private final String pref_ro_top = "ro_top";
+
+    private SharedPreferences sharedPreferences;
+
+    private String[] gewaehlte_Aufloesung;
+    private int aufloesung_Position = 0;
 
     //Kamera-auflösungen für die Auswahl
     private String[] supportedCameraSizes;
 
-    //Speicherungsklasse
-    private SaveClass saveClass;
 
     Context context;
 
@@ -85,6 +110,7 @@ public class EinstellungenActivity extends AppCompatActivity {
         anzahlBilder = findViewById(R.id.seekBar_AnzahlBilder);
         cameraSizes = findViewById(R.id.spinner_aufloesung);
         customScrollView = findViewById(R.id.customScrollView);
+        button_Bildbereich = findViewById(R.id.button_Bildbereich);
 
 
         rechteckLinksOben = findViewById(R.id.imageView_lo);
@@ -93,26 +119,29 @@ public class EinstellungenActivity extends AppCompatActivity {
         rechteckRechtsOben = findViewById(R.id.imageView_ro);
 
 
-        saveClass = SaveClass.getInstance(context);
-
-
-        automatischHochladen.setChecked(saveClass.isAutomatischHochladen());
-        email.setText(saveClass.getEmail());
-        passwort.setText(saveClass.getPasswort());
-        int progress = saveClass.getAnzahlBilder();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            anzahlBilder.setProgress(progress, true);
-        }
-        nummer.setText("" + progress + " mal die Sekunde");
-
-
         setSupportedCameraSizes();
         //create an adapter to describe how the items are displayed, adapters are used in several places in android.
         //There are multiple variations of this, but this is the basic variant.
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, supportedCameraSizes);
         //set the spinners adapter to the previously created one.
         cameraSizes.setAdapter(adapter);
-        cameraSizes.setSelection(saveClass.getAufloesung_position());
+
+        //Speicherung
+        sharedPreferences = getSharedPreferences(prefName, 0);
+
+
+        automatischHochladen.setChecked(sharedPreferences.getBoolean(pref_automatischHochladen, false));
+        email.setText(sharedPreferences.getString(pref_email, ""));
+        passwort.setText(sharedPreferences.getString(pref_passwort, ""));
+        int progress = sharedPreferences.getInt(pref_anzahlBilder, 10);
+        //Werte aus Speicherung setzen
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            anzahlBilder.setProgress(progress, true);
+        }
+        nummer.setText("" + progress + " mal die Sekunde");
+        aufloesung_Position = sharedPreferences.getInt(pref_aufloesung_position, 0);
+        cameraSizes.setSelection(aufloesung_Position);
+
 
         rechteckLinksOben.setOnTouchListener(onTouchListener());
         rechteckLinksUnten.setOnTouchListener(onTouchListener());
@@ -140,47 +169,70 @@ public class EinstellungenActivity extends AppCompatActivity {
         //ImageView Startwerte setzen
         //Links oben
         RelativeLayout.LayoutParams lp_lo = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
-        lp_lo.leftMargin = LEFT_LEFT_MARGIN;
-        lp_lo.topMargin = TOP_TOP_MARGIN;
+        lp_lo.leftMargin = sharedPreferences.getInt(pref_lo_left, LEFT_LEFT_MARGIN);
+        lp_lo.topMargin = sharedPreferences.getInt(pref_lo_top, TOP_TOP_MARGIN);
         lp_lo.rightMargin = STANDARD_MARGIN;
         lp_lo.bottomMargin = STANDARD_MARGIN;
         rechteckLinksOben.setLayoutParams(lp_lo);
 
         //Links unten
         RelativeLayout.LayoutParams lp_lu = (RelativeLayout.LayoutParams) rechteckLinksUnten.getLayoutParams();
-        lp_lu.leftMargin = LEFT_LEFT_MARGIN;
-        lp_lu.topMargin = BOTTOM_TOP_MARGIN;
+        lp_lu.leftMargin = sharedPreferences.getInt(pref_lu_left, LEFT_LEFT_MARGIN);
+        lp_lu.topMargin = sharedPreferences.getInt(pref_lu_top, BOTTOM_TOP_MARGIN);
         lp_lu.rightMargin = STANDARD_MARGIN;
         lp_lu.bottomMargin = STANDARD_MARGIN;
         rechteckLinksUnten.setLayoutParams(lp_lu);
 
         //Rechts unten
         RelativeLayout.LayoutParams lp_ru = (RelativeLayout.LayoutParams) rechteckRechtsUnten.getLayoutParams();
-        lp_ru.leftMargin = RIGHT_LEFT_MARGIN;
-        lp_ru.topMargin = BOTTOM_TOP_MARGIN;
+        lp_ru.leftMargin = sharedPreferences.getInt(pref_ru_left, RIGHT_LEFT_MARGIN);
+        lp_ru.topMargin = sharedPreferences.getInt(pref_ru_top, BOTTOM_TOP_MARGIN);
         lp_ru.rightMargin = STANDARD_MARGIN;
         lp_ru.bottomMargin = STANDARD_MARGIN;
         rechteckRechtsUnten.setLayoutParams(lp_ru);
 
         //Rechts oben
         RelativeLayout.LayoutParams lp_ro = (RelativeLayout.LayoutParams) rechteckRechtsOben.getLayoutParams();
-        lp_ro.leftMargin = RIGHT_LEFT_MARGIN;
-        lp_ro.topMargin = TOP_TOP_MARGIN;
+        lp_ro.leftMargin = sharedPreferences.getInt(pref_ro_left, RIGHT_LEFT_MARGIN);
+        lp_ro.topMargin = sharedPreferences.getInt(pref_ro_top, TOP_TOP_MARGIN);
         lp_ro.rightMargin = STANDARD_MARGIN;
         lp_ro.bottomMargin = STANDARD_MARGIN;
         rechteckRechtsOben.setLayoutParams(lp_ro);
 
 
+        button_Bildbereich.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Speicherung des Bildbereichs
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(pref_lo_left, lp.leftMargin);
+                editor.putInt(pref_lo_top, lp.topMargin);
+                lp = (RelativeLayout.LayoutParams) rechteckLinksUnten.getLayoutParams();
+                editor.putInt(pref_lu_left, lp.leftMargin);
+                editor.putInt(pref_lu_top, lp.topMargin);
+                lp = (RelativeLayout.LayoutParams) rechteckRechtsUnten.getLayoutParams();
+                editor.putInt(pref_ru_left, lp.leftMargin);
+                editor.putInt(pref_ru_top, lp.topMargin);
+                lp = (RelativeLayout.LayoutParams) rechteckRechtsOben.getLayoutParams();
+                editor.putInt(pref_ro_left, lp.leftMargin);
+                editor.putInt(pref_ro_top, lp.topMargin);
+                editor.commit();
+            }
+        });
+
         automatischHochladen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                saveClass.setAutomatischHochladen(automatischHochladen.isChecked(), context);
+
+                //saveClass.setAutomatischHochladen(automatischHochladen.isChecked(), context);
             }
         });
 
         email.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
-                saveClass.setEmail(email.getText().toString(), context);
+                //TODO: Login zu google drive prüfen
+                //saveClass.setEmail(email.getText().toString(), context);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -191,7 +243,8 @@ public class EinstellungenActivity extends AppCompatActivity {
         passwort.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
-                saveClass.setPasswort(passwort.getText().toString(), context);
+                //TODO: Login zu google drive prüfen
+                //saveClass.setPasswort(passwort.getText().toString(), context);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -212,19 +265,15 @@ public class EinstellungenActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                saveClass.setAnzahlBilder(seekBar.getProgress(), context);
             }
         });
 
         cameraSizes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String[] selected = parent.getItemAtPosition(position).toString().split("x");
-                System.out.println(selected[0] + "x" + selected[1] + " gespeichert");
-                saveClass.setAufloesung_position(position);
-                saveClass.setAufloesung_hoehe(Integer.parseInt(selected[1]));
-                saveClass.setAufloesung_breite(Integer.parseInt(selected[0]));
-                saveClass.save(context);
+                gewaehlte_Aufloesung = parent.getItemAtPosition(position).toString().split("x");
+                System.out.println(gewaehlte_Aufloesung[0] + "x" + gewaehlte_Aufloesung[1] + " gespeichert");
+                aufloesung_Position = position;
             }
 
             @Override
@@ -461,6 +510,20 @@ public class EinstellungenActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
 
-
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(pref_anzahlBilder, anzahlBilder.getProgress());
+        editor.putInt(pref_aufloesung_breite, Integer.parseInt(gewaehlte_Aufloesung[0]));
+        editor.putInt(pref_aufloesung_hoehe, Integer.parseInt(gewaehlte_Aufloesung[1]));
+        editor.putInt(pref_aufloesung_position, aufloesung_Position);
+        editor.putBoolean(pref_automatischHochladen, automatischHochladen.isChecked());
+        editor.putString(pref_email, email.getText().toString());
+        editor.putString(pref_passwort, passwort.getText().toString());
+        editor.putFloat(pref_left_faktor, Float.parseFloat(gewaehlte_Aufloesung[1]) / (float) MAX_LEFT_MARGIN);
+        editor.putFloat(pref_top_faktor, Float.parseFloat(gewaehlte_Aufloesung[0]) / (float) MAX_TOP_MARGIN);
+        editor.commit();
+    }
 }

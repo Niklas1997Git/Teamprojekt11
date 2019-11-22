@@ -1,5 +1,6 @@
 package com.example.teamprojekt;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,9 +18,25 @@ public class TakePicturesAutonom {
     AutonomerModusActivity autonomerModus;
 
 
+    private final String prefName = "MyPref";
+    private final String pref_lo_left = "lo_left";
+    private final String pref_lo_top = "lo_top";
+    private final String pref_ru_left = "ru_left";
+    private final String pref_ru_top = "ru_top";
+
+    int zeileOben;
+    int zeileUnten;
+    int spalteLinks;
+    int spalteRechts;
+
     public TakePicturesAutonom(Camera camera, AutonomerModusActivity autonomerModusActivity){
         this.camera = camera;
         this.autonomerModus = autonomerModusActivity;
+        SharedPreferences sharedPreferences = autonomerModusActivity.getSharedPreferences(prefName, 0);
+        zeileOben = sharedPreferences.getInt(pref_lo_top, 100);
+        zeileUnten = sharedPreferences.getInt(pref_ru_top, 200);
+        spalteLinks = sharedPreferences.getInt(pref_ru_left, 200);
+        spalteRechts = sharedPreferences.getInt(pref_lo_left, 100);
     }
 
     //wird durch captureImage() aufgerufen
@@ -59,12 +76,7 @@ public class TakePicturesAutonom {
 
     private Bitmap cutOut(Bitmap origialBitmap) {
         //Bitmap origialBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.original);
-
-        int zeileOben = 100;
-        int zeileUnten = 200;
         assert (zeileOben>=0 && zeileOben<zeileUnten && zeileUnten<=origialBitmap.getWidth());
-        int spalteLinks = 200;
-        int spalteRechts = 100;
         assert (spalteRechts>=0 && spalteRechts<spalteLinks && spalteLinks<=origialBitmap.getHeight());
         Bitmap cutBitmap = Bitmap.createBitmap(origialBitmap.getWidth() / 2,
                 origialBitmap.getHeight() / 2, Bitmap.Config.ARGB_8888);
