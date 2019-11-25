@@ -28,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +38,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.JsonParser;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 
@@ -85,6 +87,7 @@ public class EinstellungenActivity extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
                 .build();
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +194,7 @@ public class EinstellungenActivity extends AppCompatActivity {
 
 
 
-        String filePath = Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip";
+        String filePath = Environment.getExternalStorageDirectory() + File.separator + "1A_Project.zip";
 
 
         googleDrive.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
@@ -232,37 +235,7 @@ public class EinstellungenActivity extends AppCompatActivity {
 
                         credential.setSelectedAccount(account.getAccount());
 
-                        Drive googleDriveService = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new JsonFactory() {
-                            @Override
-                            public JsonParser createJsonParser(InputStream in) throws IOException {
-                                return null;
-                            }
-
-                            @Override
-                            public JsonParser createJsonParser(InputStream in, Charset charset) throws IOException {
-                                return null;
-                            }
-
-                            @Override
-                            public JsonParser createJsonParser(String value) throws IOException {
-                                return null;
-                            }
-
-                            @Override
-                            public JsonParser createJsonParser(Reader reader) throws IOException {
-                                return null;
-                            }
-
-                            @Override
-                            public JsonGenerator createJsonGenerator(OutputStream out, Charset enc) throws IOException {
-                                return null;
-                            }
-
-                            @Override
-                            public JsonGenerator createJsonGenerator(Writer writer) throws IOException {
-                                return null;
-                            }
-                        }, credential)
+                        Drive googleDriveService = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
                                 .setApplicationName(applicationName)
                                 .build();
 
