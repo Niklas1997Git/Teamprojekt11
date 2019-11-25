@@ -194,7 +194,7 @@ public class EinstellungenActivity extends AppCompatActivity {
 
 
 
-        String filePath = Environment.getExternalStorageDirectory() + File.separator + "1A_Project.zip";
+        String filePath = Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip";
 
 
         googleDrive.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
@@ -202,7 +202,7 @@ public class EinstellungenActivity extends AppCompatActivity {
             public void onSuccess(String s) {
                 progressDialog.dismiss();
 
-                Toast.makeText(getApplicationContext(), "Uplaoded Successfully", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Uploaded Successfully", Toast.LENGTH_LONG).show();
             }
         })
 
