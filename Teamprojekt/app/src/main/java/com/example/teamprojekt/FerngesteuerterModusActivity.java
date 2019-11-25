@@ -82,7 +82,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
         //open Camera
         camera = Camera.open();
-        takePicturesFerngesteuert = new TakePicturesFerngesteuert(camera);
+        takePicturesFerngesteuert = new TakePicturesFerngesteuert(camera, this);
 
         //Preview wird angezeigt
         showCamera = new ShowCamera(this, camera);
@@ -116,14 +116,10 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             }
         }, 0, 1000L / 10L);
 
-
-
         new Handler().postDelayed(() -> zipFileAtPath(
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project",
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
-
-
     }
 
     private void setText(){
