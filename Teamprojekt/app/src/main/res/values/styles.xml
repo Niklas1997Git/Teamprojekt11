@@ -9,11 +9,10 @@
     </style>
 
     <style name="btn_style">
-        <item name="android:textColor">@color/blackColor</item>
+        <item name="android:textColor">@color/whiteColor</item>
         <item name="android:textSize">15sp</item>
         <item name="android:fontFamily">serif</item>
-
-
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="app_color">
