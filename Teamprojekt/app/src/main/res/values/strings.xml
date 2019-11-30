@@ -1,7 +1,8 @@
 <resources>
+    <string name="app_name">LayoutXML</string>
 
     <!--HAUPTMENU STRINGS-->
-    <string name="app_name">Hauptmenu</string>
+
     <string name="intro_text">AppName</string>
     <string name="btn_fernsteuern">Fernsteuern</string>
     <string name="btn_autonom">Autonom</string>
@@ -29,4 +30,6 @@
     <string name="Bildbereich_Button">Bildbereich bestätigen</string>
 
 
+    <!--AUTONOM-->
+    <string name="start_stop">Start/Stop</string>
 </resources>
