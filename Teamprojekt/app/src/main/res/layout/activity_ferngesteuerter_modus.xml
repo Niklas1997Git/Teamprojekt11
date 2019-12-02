@@ -46,7 +46,7 @@
             style="@style/btn_style"
             android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="132dp"
             android:onClick="toggleAufnahme"
             android:text="@string/btn_bilderaufnahme_start_text" />
