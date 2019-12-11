@@ -3,14 +3,25 @@ package com.example.teamprojekt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import android.app.ProgressDialog;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,12 +51,16 @@ import static com.example.teamprojekt.EinstellungenActivity.googleDrive;
 
 public class FerngesteuerterModusActivity extends AppCompatActivity {
 
+    private final int BOARD_PORT = 10001;
     Camera camera;
     FrameLayout frameLayout;
     ShowCamera showCamera;
     TakePicturesFerngesteuert takePicturesFerngesteuert;
     public static String datei_name = "";
     boolean reihenAufnahme = false;
+
+    TextView bilderAufnehmenText;
+
     boolean abbrechen =false;
 
     String lenkwinkel_string;
@@ -57,14 +72,25 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
     Button bilderAufnehmenButton;
 
+    UDPClientListen clientListen;
+
     int counter;
+    final File folder_json = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "JSON");
+
+
+    //Wenn der user fertig mit der Json Datei ist und die umbenennen will ,
+    //dann setzt man die Variable auf true
+    private boolean isUserFinish = false;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ferngesteuerter_modus);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Ferngesteuerter Modus");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Ferngesteuerter Modus");
+        }
 
         lenkwinkelText = findViewById(R.id.textView8);
         geschwindigkeitText = findViewById(R.id.textView9);
@@ -80,15 +106,17 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
         //open Camera
         camera = Camera.open();
-        takePicturesFerngesteuert = new TakePicturesFerngesteuert(camera);
+        takePicturesFerngesteuert = new TakePicturesFerngesteuert(camera, this);
 
         //Preview wird angezeigt
         showCamera = new ShowCamera(this, camera);
         frameLayout.addView(showCamera);
+
+        clientListen = new UDPClientListen(BOARD_PORT);
     }
 
 
-    private void takePictures(){
+    private void ferngesteuertesFahren(){
         //Wartet eine Sekunde bis der Code in run() wieder ausgeführt wird
         //FerngesteuerterModusActivity.datei_name = datumsformat.format(kalender.getTime());
 
@@ -105,7 +133,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
                     if(abbrechen){
                         reihenAufnahme = false;
                         abbrechen = false;
-                        bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_start_text);
+                        //bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_start_text);
                         System.out.println("Aufnahme beenden");
                     }
                 }
@@ -113,11 +141,11 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         }, 0, 1000L / 10L);
 
 
-
         new Handler().postDelayed(() -> zipFileAtPath(
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project",
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
+
 
 
 
@@ -161,17 +189,26 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
     private synchronized void aufnahmen(){
-        //takePicturesFerngesteuert.captureImage(frameLayout);
+        takePicturesFerngesteuert.captureImage(frameLayout);
         System.out.println("Bild aufgenommen");
+        //Daten vom Board empfangen
+        clientListen.run();
+        //TODO UDP-Nachricht verarbeiten
+
+        //Teststring zur Erstellung einer json datei
         String[] s = {"90", "50", "Time"};
-        //saveJSONFile(s[0], s[1], s[2]);
+        //JSON-Datei erstellen und speichern
+        saveJSONFile(s[0], s[1], s[2]);
         System.out.println("JSON gespeichert");
         //updateWerte(s[0], s[1]);
+        //Texte Updaten
+        //TODO Ab und zu wird eine Exception geworfen
         lenkwinkel_string = s[0];
         geschwindigkeit_string = s[1];
         setText();
     }
 
+    //Updaten der Texte in der Szene
     private void updateWerte(String lenkwert, String geschwindigkeit){
         lenkwinkelText.setText("Lenkwinkel: " + lenkwert);
         geschwindigkeitText.setText("Geschwindigkeit: " + geschwindigkeit);
@@ -186,6 +223,8 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
 
+    //JSON Datei erstellen und speichern
+    //TODO eventuell anpassen, je nachdem welche Daten vom Board übergeben werden
     private void saveJSONFile(String steering, String throttle, String timestamp) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -200,14 +239,13 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         if(!state.equals(Environment.MEDIA_MOUNTED)){
             return;
         }else {
-            //Ausgabe Order entspricht "GUI" im internen Speicher
-            File folder_json = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "JSON");
-
+            //JSON Ordner erstellen, falls noch nicht vorhanden
             if (!folder_json.exists()) {
                 folder_json.mkdirs();
 
             }
             try {
+                //JSON-Datei speichern
                 File jsonFile = new File(folder_json, datei_name + ".json");
                 FileWriter fileWriter = new FileWriter(jsonFile);
                 fileWriter.write(jsonObject.toString());
@@ -220,6 +258,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     }
 
 
+    //Aufnahme starten oder beenden
     public void toggleAufnahme(View view){
         //Schaltet die Reihenaufnahme ein oder aus
         if(reihenAufnahme){
@@ -234,11 +273,12 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             System.out.println("Aufnahme Beginn");
         }
         //Startet die Bildaufnahme
-        takePictures();
+        ferngesteuertesFahren();
     }
 
 
 
+    //.Zip datei erstellen
     public boolean zipFileAtPath(String sourcePath, String toLocation) {
         final int BUFFER = 2048;
 
@@ -309,6 +349,8 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         return segments[segments.length - 1];
     }
 
+
+    //Ordner löschen
     void DeleteRecursive(File dir)
     {
         System.out.println("DELETEPREVIOUS TOP");
@@ -342,9 +384,52 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         dir.delete();
     }
 
-
-
     private void uploadToGoogleDrive(){
 
     }
+    /*-------------------------DATEI UMBENENNEN----------------------*/
+    //Wir geben den User die Möglichkeit die Datei umzubennnen
+    //Dabei sollen wir zuerst überprüfen, ob er damit fertig ist!!!!!
+    // Wenn man testen will, könnte man schon die Varible auf true setzen. und die Methode renameFile()
+    //an der richtigen Stelle aufrufen
+
+    private void renameFile(){
+        if(isUserFinish){
+            createPopUp();
+        }
+    }
+
+
+    //PopUp zur Dateiumbennenung
+    private void createPopUp(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(FerngesteuerterModusActivity.this);
+        alertDialog.setTitle("Datei Umbenennen");
+        alertDialog.setMessage("Geben Sie bitte einen neuen Namen ein");
+
+        final EditText input = new EditText(FerngesteuerterModusActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton("Umbenennen",
+                (dialog, which) -> {
+                    if(!input.getText().toString().equals("")){
+                        datei_name = input.getText().toString();
+                        Log.d("\t*************DATEI_NAME:", datei_name);
+                        Toast.makeText(getApplicationContext(), "Datei erfolgreich umbenannt", Toast.LENGTH_LONG).show();
+                    }else{
+                        createPopUp();
+                        Toast.makeText(getApplicationContext(), "Geben Sie einen Naemen!", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        alertDialog.setNegativeButton("Abbrechen",
+                (dialog, which) -> dialog.cancel());
+
+        alertDialog.show();
+    }
+
+
 }

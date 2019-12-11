@@ -2,6 +2,7 @@ package com.example.teamprojekt;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
@@ -13,13 +14,18 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
 
     Camera camera;
     SurfaceHolder holder;
+    SharedPreferences sharedPreferences;
+    private final String prefName = "MyPref";
+    private final String pref_aufloesung_breite = "breite";
+    private final String pref_aufloesung_hoehe = "hoehe";
+
 
     public ShowCamera(Context context, Camera camera) {
         super(context);
         this.camera = camera;
         holder = getHolder();
         holder.addCallback(this);
-
+        sharedPreferences = context.getSharedPreferences(prefName, 0);
     }
 
     @Override
@@ -50,17 +56,20 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
 
         //Sucht die kleinste Auflösung heraus und weist diese zu
 
+        /*
         for(Camera.Size size : sizes){
             //System.out.println("Size width: "+ size.width +", Size height: " + size.height);
-            if(size.width < mSize.width){
+            if(size.width == saveClass.getAufloesung_breite() && mSize.height == saveClass.getAufloesung_hoehe()){
                 mSize = size;
             }
         }
+        */
 
 
-        System.out.println("final Size : "+ mSize.width +" x " + mSize.height);
+        System.out.println("final Size : "+ sharedPreferences.getInt(pref_aufloesung_breite, 320) +" x " + sharedPreferences.getInt(pref_aufloesung_hoehe, 240));
 
         //Change orientation
+
         if(this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE){
             params.set("orientation", "portrait");
             camera.setDisplayOrientation(90);
@@ -72,9 +81,9 @@ public class ShowCamera extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         //Setzt die neue Auflösung
-        params.setPictureSize(mSize.width, mSize.height);
-
+        params.setPictureSize(sharedPreferences.getInt(pref_aufloesung_breite, 320), sharedPreferences.getInt(pref_aufloesung_hoehe, 240));
         camera.setParameters(params);
+
         try{
             camera.setPreviewDisplay(holder);
             camera.startPreview();
