@@ -243,6 +243,7 @@ public class EinstellungenActivity extends AppCompatActivity {
                         googleDrive = new GoogleDrive(googleDriveService);
 
 
+                        googleDrive.createFolder();
 
 
                     } catch (ApiException e) {
