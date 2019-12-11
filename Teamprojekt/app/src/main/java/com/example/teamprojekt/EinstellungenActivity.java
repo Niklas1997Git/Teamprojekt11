@@ -35,20 +35,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.JsonGenerator;
-import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.Collections;
 
 public class EinstellungenActivity extends AppCompatActivity {
@@ -59,7 +50,7 @@ public class EinstellungenActivity extends AppCompatActivity {
     private boolean loggedIn;
     Button signOut;
     TextView account_email_textView;
-    public static GoogleDrive googleDrive;
+    public static GoogleDriveHelper googleDriveHelper;
     GoogleSignInAccount account;
 
     private Switch automatischHochladen;
@@ -197,7 +188,7 @@ public class EinstellungenActivity extends AppCompatActivity {
         String filePath = Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip";
 
 
-        googleDrive.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
+        googleDriveHelper.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
             @Override
             public void onSuccess(String s) {
                 progressDialog.dismiss();
@@ -240,10 +231,11 @@ public class EinstellungenActivity extends AppCompatActivity {
                                 .build();
 
 
-                        googleDrive = new GoogleDrive(googleDriveService);
+                        googleDriveHelper = new GoogleDriveHelper(googleDriveService);
 
-
-
+                        //googleDriveHelper.createFolder();
+                        googleDriveHelper.showFolder();
+                        //googleDriveHelper.createFileInFolder(googleDriveHelper.createFolder().toString());
 
                     } catch (ApiException e) {
                         // The ApiException status code indicates the detailed failure reason.

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 public class HauptmenuActivity extends AppCompatActivity {
 
@@ -23,6 +24,9 @@ public class HauptmenuActivity extends AppCompatActivity {
 
     /** Called when the user taps the FerngesteuerterModus button */
     public void zuFerngesteuerterModus(View view) {
+        if(EinstellungenActivity.googleDriveHelper == null){
+            Toast.makeText(this, "Bevor Sie eine Aufnahme starten können, müssen Sie sich in den Einstellungen bei Google Drive anmelden", Toast.LENGTH_LONG).show();
+        }
         Intent intent = new Intent(this, FerngesteuerterModusActivity.class);
         startActivity(intent);
     }

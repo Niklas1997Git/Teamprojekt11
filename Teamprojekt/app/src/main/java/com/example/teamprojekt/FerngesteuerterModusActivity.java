@@ -35,7 +35,7 @@ import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.example.teamprojekt.EinstellungenActivity.googleDrive;
+import static com.example.teamprojekt.EinstellungenActivity.googleDriveHelper;
 
 
 public class FerngesteuerterModusActivity extends AppCompatActivity {
@@ -136,7 +136,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         String filePath = Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip";
 
 
-        googleDrive.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
+        googleDriveHelper.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
             @Override
             public void onSuccess(String s) {
                 progressDialog.dismiss();
@@ -228,13 +228,19 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_start_text);
             System.out.println("Aufnahme abbrechen");
         }else{
-            reihenAufnahme = true;
-            abbrechen = false;
-            bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_stop_text);
-            System.out.println("Aufnahme Beginn");
+            if(EinstellungenActivity.googleDriveHelper == null){
+                Toast.makeText(this, "Bevor Sie eine Aufnahme starten können, müssen Sie sich in den Einstellungen bei Google Drive anmelden", Toast.LENGTH_LONG).show();
+            }else{
+                reihenAufnahme = true;
+                abbrechen = false;
+                bilderAufnehmenButton.setText(R.string.btn_bilderaufnahme_stop_text);
+                System.out.println("Aufnahme Beginn");
+                takePictures();
+            }
+
         }
         //Startet die Bildaufnahme
-        takePictures();
+        //takePictures();
     }
 
 
