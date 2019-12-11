@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/lightblueColor"
     >
 
 
@@ -19,6 +18,7 @@
             android:layout_width="240dp"
             android:layout_height="320dp"
             android:layout_marginTop="50dp">
+
         </FrameLayout>
 
         <TextView
