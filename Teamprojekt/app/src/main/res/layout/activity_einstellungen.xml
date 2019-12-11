@@ -4,11 +4,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/customScrollView"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
     android:background="@color/lightblueColor">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/zugangsdata_text" />
+
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:foreground="@drawable/sign_in">
+
+    </com.google.android.gms.common.SignInButton>
+
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:background="@color/blueSignOut"
+        android:text="@string/ausloggen"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/whiteColor" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="uploadFile"
+        android:text="Button" />
+
+    <TextView
+        android:id="@+id/account_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="TextView" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textEmailAddress" />
 
 
     <LinearLayout

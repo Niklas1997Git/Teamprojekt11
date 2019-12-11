@@ -1,14 +1,20 @@
 package com.example.teamprojekt;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+
+import android.app.ProgressDialog;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,11 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+//import java.io.File;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,6 +45,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import static com.example.teamprojekt.EinstellungenActivity.googleDrive;
 
 
 public class FerngesteuerterModusActivity extends AppCompatActivity {
@@ -128,11 +140,49 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             }
         }, 0, 1000L / 10L);
 
+
         new Handler().postDelayed(() -> zipFileAtPath(
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project",
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
+
+
+
+
+        uploadFile();
+
     }
+
+
+
+    public  void uploadFile(){
+        ProgressDialog progressDialog = new ProgressDialog(FerngesteuerterModusActivity.this);
+        progressDialog.setTitle("Uploading to Google Drive");
+        progressDialog.setMessage("Please wait....");
+
+
+        String filePath = Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip";
+
+
+        googleDrive.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                progressDialog.dismiss();
+
+                Toast.makeText(getApplicationContext(), "Uplaoded Successfully", Toast.LENGTH_LONG).show();
+            }
+        })
+
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Check your google Drive Api key", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+
 
     private void setText(){
         runOnUiThread(() -> updateWerte(lenkwinkel_string, geschwindigkeit_string));
@@ -334,7 +384,9 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         dir.delete();
     }
 
+    private void uploadToGoogleDrive(){
 
+    }
     /*-------------------------DATEI UMBENENNEN----------------------*/
     //Wir geben den User die Möglichkeit die Datei umzubennnen
     //Dabei sollen wir zuerst überprüfen, ob er damit fertig ist!!!!!
