@@ -1,6 +1,8 @@
 package com.example.teamprojekt;
 
 
+import android.os.Environment;
+
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
@@ -98,10 +100,33 @@ public class GoogleDrive {
 
     }
 
+    public Task<String> createFileInFolder(){
+        return Tasks.call(mExecutor, () ->{
+            System.out.println("---------------CREATE FILE IN FOLDER-------------------");
+            if(folderExists(projectFolderId).equals("false")){
+                System.out.println("CREATE PROJECTFOLDER");
+                projectFolderId = createFolder().toString();
+            }
+            System.out.println("CreateFileInFolder");
+            File fileMetadata = new File();
+            fileMetadata.setName("photo.zip");
+            fileMetadata.setParents(Collections.singletonList(projectFolderId));
+            String path = Environment.getExternalStorageDirectory() + java.io.File.separator + "A_Project.zip";
+            java.io.File filePath = new java.io.File(path);
+            FileContent mediaContent = new FileContent("application/zip.zip", filePath);
+            File file = mDriveService.files().create(fileMetadata, mediaContent)
+                    .setFields("id, parents")
+                    .execute();
+            System.out.println("File ID: " + file.getId());
+            System.out.println("---------------CREATE FILE IN FOLDER-------------------");
+            return file.getId();
+        });
+    }
+
     public Task<String> createFolder(){
         return Tasks.call(mExecutor, () ->{
-            System.out.println("---------------CREATE FOLDER-------------------");
-            System.out.println("CREATE FOLDER");
+            System.out.println("---------------CREATE PROJECTFOLDER-------------------");
+            System.out.println("CREATE PROJECTFOLDER");
             if(projectFolderId !=null){
                 System.out.println("PROJECTFOLDER != NULL");
                 if(folderExists(projectFolderId).equals("true")){
@@ -119,16 +144,76 @@ public class GoogleDrive {
                         .setFields("id")
                         .execute();
                 projectFolderId = file.getId();
-                System.out.println("FOLDER CREATED");
-                System.out.println("---------------CREATE FOLDER-------------------");
+                System.out.println("PROJECTFOLDER CREATED");
+                System.out.println("---------------CREATE PROJECTFOLDER-------------------");
                 return  file.getId();
             }
-            System.out.println("---------------CREATE FOLDER-------------------");
+            System.out.println("---------------CREATE PROJECTFOLDER-------------------");
             return  null;
         });
+    }
+
+    public Task<String> createAnroidSubFolder(){
+        return Tasks.call(mExecutor, () ->{
+            System.out.println("---------------CREATE ANDROIDFOLDER-------------------");
+            if(androidFolderId !=null){
+                System.out.println("ANDROIDFOLDER != NULL");
+                if(folderExists(androidFolderId).equals("true")){
+                    System.out.println("ANDROIDFOLDER EXISTS");
+                    return androidFolderId;
+                }
+            }else{
+                System.out.println("ANDROIDFOLDER DOES NOT EXISTS");
+                File fileMetadata = new File();;
+                fileMetadata.setName("Android");
+                fileMetadata.setParents(Collections.singletonList(projectFolderId));
+                fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+                // For mime type of specific file visit Drive Doucumentation
+                File file = mDriveService.files().create(fileMetadata)
+                        .setFields("id, parents")
+                        .execute();
+                androidFolderId = file.getId();
+                System.out.println("ANDROIDFOLDER CREATED");
+                System.out.println("---------------CREATE ANDROIDFOLDER-------------------");
+                return  file.getId();
+            }
+            System.out.println("---------------CREATE ANDROIDFOLDER-------------------");
+            return  null;
+        });
+    }
 
 
 
+    public Task<String> createIosSubFolder(){
+        return Tasks.call(mExecutor, () ->{
+            System.out.println("---------------CREATE IOSFOLDER-------------------");
+            System.out.println("CREATE FOLDER");
+            if(iosFolderId !=null){
+                System.out.println("IOSFOLDER != NULL");
+                if(folderExists(iosFolderId).equals("true")){
+                    System.out.println("IOSFOLDER EXISTS");
+                    return iosFolderId;
+                }
+            }else{
+                System.out.println("IOSFOLDER DOES NOT EXISTS");
+                File fileMetadata = new File();;
+                fileMetadata.setName("IOS");
+                fileMetadata.setParents(Collections.singletonList(projectFolderId));
+                fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+                // For mime type of specific file visit Drive Doucumentation
+                File file = mDriveService.files().create(fileMetadata)
+                        .setFields("id, parents")
+                        .execute();
+                iosFolderId = file.getId();
+                System.out.println("IOSFOLDER CREATED");
+                System.out.println("---------------CREATE IOSFOLDER-------------------");
+                return  file.getId();
+            }
+            System.out.println("---------------CREATE IOSFOLDER-------------------");
+            return  null;
+        });
     }
 
     public Task<String> folderExists(String fileId){

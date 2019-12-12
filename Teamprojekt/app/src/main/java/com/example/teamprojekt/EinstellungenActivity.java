@@ -242,8 +242,11 @@ public class EinstellungenActivity extends AppCompatActivity {
 
                         googleDrive = new GoogleDrive(googleDriveService);
 
-
-                        //googleDrive.createFolder();
+                        //googleDrive.createFileInFolder();
+                        googleDrive.createFolder();
+                        googleDrive.createAnroidSubFolder();
+                        googleDrive.createIosSubFolder();
+                        googleDrive.createFileInFolder();
 
 
                     } catch (ApiException e) {
