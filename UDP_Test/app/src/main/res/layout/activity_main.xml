@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/listenPort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="listenPort"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="103dp"
+        tools:layout_editor_absoluteY="53dp" />
+
+    <EditText
+        android:id="@+id/sendPort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="sendPort"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/ipAdresse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="IP-Adress-Send"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/send_Data"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:ems="10"
+        android:hint="Zu sendender Datensatz"
+        android:inputType="textPersonName"
+        android:singleLine="false" />
+
+    <TextView
+        android:id="@+id/receiveData"
+        android:layout_width="match_parent"
+        android:layout_height="84dp"
+        android:text="Ankommender Datensatz"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/button_SendData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Daten senden" />
+
+    <Button
+        android:id="@+id/button_Receive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Empfangen starten" />
+
+</LinearLayout>
