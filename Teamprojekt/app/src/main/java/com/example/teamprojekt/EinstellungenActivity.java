@@ -53,8 +53,8 @@ public class EinstellungenActivity extends AppCompatActivity {
     private int y_neu;
 
     private final int SQUARE_SIZE=25;
-    private final int MAX_LEFT_MARGIN = 480 - SQUARE_SIZE;
-    private final int MAX_TOP_MARGIN = 640 - SQUARE_SIZE;
+    private int MAX_LEFT_MARGIN = 480 - SQUARE_SIZE;
+    private int MAX_TOP_MARGIN = 640 - SQUARE_SIZE;
     private final int STANDARD_MARGIN = 0;
 
     private final int LEFT_LEFT_MARGIN = 60;
@@ -112,6 +112,16 @@ public class EinstellungenActivity extends AppCompatActivity {
         customScrollView = findViewById(R.id.customScrollView);
         button_Bildbereich = findViewById(R.id.button_Bildbereich);
 
+        ImageView bild = findViewById(R.id.imageView4);
+        MAX_LEFT_MARGIN = bild.getLayoutParams().width - SQUARE_SIZE;
+        MAX_TOP_MARGIN = bild.getLayoutParams().height - SQUARE_SIZE;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            System.out.println("Width "+ bild.getLayoutParams().width);
+            System.out.println("Height" + bild.getLayoutParams().height);
+        }
+        System.out.println("Width "+ MAX_LEFT_MARGIN);
+        System.out.println("Height" + MAX_TOP_MARGIN);
 
         rechteckLinksOben = findViewById(R.id.imageView_lo);
         rechteckLinksUnten = findViewById(R.id.imageView_lu);
