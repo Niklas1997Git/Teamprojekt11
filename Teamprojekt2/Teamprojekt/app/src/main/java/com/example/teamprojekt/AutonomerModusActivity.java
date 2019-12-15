@@ -3,6 +3,7 @@ package com.example.teamprojekt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import org.tensorflow.lite.Interpreter;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,6 +32,7 @@ public class AutonomerModusActivity extends AppCompatActivity {
     private int anzahlBilder;
     Context context;
 
+    Interpreter tflite;
 
     private final String prefName = "MyPref";
     private final String pref_anzahlBilder = "anzahlBilder";
@@ -44,7 +52,11 @@ public class AutonomerModusActivity extends AppCompatActivity {
         startStopButton = findViewById(R.id.buttonStartStop);
         startStopButton.setText("Start");
 
-
+        try{
+            tflite = new Interpreter(loadModelFile());
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
 
         //open Camera
         int camBackId = Camera.CameraInfo.CAMERA_FACING_BACK;
@@ -53,7 +65,7 @@ public class AutonomerModusActivity extends AppCompatActivity {
         params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         camera.setParameters(params);
 
-        takePicturesAutonom = new TakePicturesAutonom(camera, this);
+        takePicturesAutonom = new TakePicturesAutonom(camera, this, tflite);
 
         //Preview wird angezeigt
         showCamera = new ShowCamera(this, camera);
@@ -72,6 +84,15 @@ public class AutonomerModusActivity extends AppCompatActivity {
             startStopButton.setText("Start");
         }
         */
+    }
+
+    private MappedByteBuffer loadModelFile() throws IOException {
+        AssetFileDescriptor fileDescriptor = this.getAssets().openFd("Filename");
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 
     private void autonomesFahren(){

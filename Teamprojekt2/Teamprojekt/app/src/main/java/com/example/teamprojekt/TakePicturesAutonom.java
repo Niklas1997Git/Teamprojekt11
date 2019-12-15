@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -13,13 +14,18 @@ import android.view.View;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.tensorflow.lite.Interpreter;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.MappedByteBuffer;
 
 public class TakePicturesAutonom {
 
     Camera camera;
     AutonomerModusActivity autonomerModus;
+
+    Interpreter tflite;
 
 
     private final String prefName = "MyPref";
@@ -33,7 +39,7 @@ public class TakePicturesAutonom {
     int spalteLinks;
     int spalteRechts;
 
-    public TakePicturesAutonom(Camera camera, AutonomerModusActivity autonomerModusActivity){
+    public TakePicturesAutonom(Camera camera, AutonomerModusActivity autonomerModusActivity, Interpreter model){
         this.camera = camera;
         this.autonomerModus = autonomerModusActivity;
         SharedPreferences sharedPreferences = autonomerModusActivity.getSharedPreferences(prefName, 0);
@@ -41,6 +47,8 @@ public class TakePicturesAutonom {
         zeileUnten = sharedPreferences.getInt(pref_ru_top, 200);
         spalteLinks = sharedPreferences.getInt(pref_ru_left, 200);
         spalteRechts = sharedPreferences.getInt(pref_lo_left, 100);
+
+        tflite = model;
     }
 
     //wird durch captureImage() aufgerufen
@@ -54,7 +62,10 @@ public class TakePicturesAutonom {
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
             Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-
+            String[] output=new String[14];
+            tflite.run(bitmapToMatrix(rotatedBitmap), output);
+            //TODO:Amins Funktion hier einfügen mit Output als Parameter
+            //TODO: "Value" durch Ergebnis der Funktion ersetzen
             JSONObject json = createJsonData("value");
             new Thread(new UDPClientSend(10000, "", json)).start();
             /*
@@ -81,6 +92,8 @@ public class TakePicturesAutonom {
 
 
 
+
+
     private Bitmap cutOut(Bitmap origialBitmap) {
         //Bitmap origialBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.original);
         assert (zeileOben>=0 && zeileOben<zeileUnten && zeileUnten<=origialBitmap.getWidth());
@@ -95,6 +108,19 @@ public class TakePicturesAutonom {
                 spalteLinks);
         canvas.drawBitmap(origialBitmap, srcRect, desRect, null);
         return cutBitmap;
+    }
+
+
+    private int[][][] bitmapToMatrix(Bitmap bitmap){
+        int[][][] matrix = new int[bitmap.getWidth()][bitmap.getHeight()][3];
+        for (int w = 0; w<bitmap.getWidth(); w++){
+            for (int h = 0; h<bitmap.getHeight();h++){
+                matrix[w][h][0] = Color.red(bitmap.getPixel(w,h));
+                matrix[w][h][0] = Color.green(bitmap.getPixel(w,h));
+                matrix[w][h][0] = Color.blue(bitmap.getPixel(w,h));
+            }
+        }
+        return matrix;
     }
 
 
