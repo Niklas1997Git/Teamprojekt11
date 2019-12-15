@@ -2,6 +2,8 @@ package com.example.teamprojekt;
 
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -12,11 +14,11 @@ public class UDPClientSend implements Runnable {
     int port;
     String ip;
     String d;
-
-    public UDPClientSend(int port, String ip, String data){
+    JSONObject json;
+    public UDPClientSend(int port, String ip, JSONObject json){
         this.port = port;
         this.ip = ip;
-        d = data;
+        this.json = json;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class UDPClientSend implements Runnable {
         try {
             udpSocket = new DatagramSocket(port);
             InetAddress serverAddr = InetAddress.getByName(ip);
-            byte[] buf = (d).getBytes();
+            byte[] buf = json.toString().getBytes();
             DatagramPacket packet = new DatagramPacket(buf, buf.length,serverAddr, port);
             udpSocket.send(packet);
         } catch (SocketException e) {

@@ -7,7 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.util.Log;
 import android.view.View;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,6 +54,9 @@ public class TakePicturesAutonom {
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
             Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+
+            JSONObject json = createJsonData("value");
+            new Thread(new UDPClientSend(10000, "", json)).start();
             /*
             int mPhotoWidth = bmp.getWidth();
             int mPhotoHeight = bmp.getHeight();
@@ -96,5 +103,18 @@ public class TakePicturesAutonom {
         if(camera !=null){
             camera.takePicture(null,null, mPictureCallback);
         }
+    }
+
+    private JSONObject createJsonData(String jsonValue){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("steering", jsonValue);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        Log.i("********JSON******", jsonObject.toString());
+        return jsonObject;
     }
 }
