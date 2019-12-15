@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/hauptmenuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/intro_Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!--
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="10dp"
+                android:text="@string/intro_text" />
+                -->
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:contentDescription="@string/app_logo"
+                android:src="@drawable/auto_logo" />
+
+        </LinearLayout>
+
+
+        <!--ButtonLayout-->
+        <LinearLayout
+            android:id="@+id/option"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_fernsteuern_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:typeface="serif"
+                android:onClick="zuFerngesteuerterModus"
+                android:text="@string/btn_fernsteuern"
+                style="@style/btn_style" />
+
+            <Button
+                android:id="@+id/btn_autonom_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:typeface="serif"
+                android:onClick="zuAutonomerModus"
+                android:text="@string/btn_autonom"
+                style="@style/btn_style" />
+
+            <Button
+                android:id="@+id/btn_einstellung_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:typeface="serif"
+                android:onClick="zuEinstellungen"
+                android:text="@string/btn_einstellung"
+                style="@style/btn_style" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

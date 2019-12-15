@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.teamprojekt.CustomScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/customScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.google.android.gms.common.SignInButton
+
+            android:layout_marginTop="5dp"
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/colorPrimary">
+            //android:foreground="@drawable/sign_in">
+
+        </com.google.android.gms.common.SignInButton>
+
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ausloggen"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/whiteColor"
+            android:background="@color/colorPrimary"/>
+
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="uploadFile"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/account_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="TextView" />
+
+
+
+        <TextView
+            android:id="@+id/textView_WieOftBilder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:text="@string/anzahlBilder" />
+
+        <SeekBar
+            android:id="@+id/seekBar_AnzahlBilder"
+            android:layout_width="match_parent"
+            android:layout_height="35dp" />
+
+        <TextView
+            android:id="@+id/textView_AnzahlBilder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="TextView" />
+
+        <Switch
+            android:id="@+id/switch_Hochladen"
+            android:layout_width="200dp"
+            android:layout_height="63dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/upload_data_text"
+            android:textColor="@android:color/secondary_text_light" />
+
+
+        <TextView
+            android:id="@+id/textView_aufloesung"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/Welche_Aufloesung" />
+
+        <Spinner
+            android:id="@+id/spinner_aufloesung"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:spinnerMode="dialog" />
+
+        <TextView
+            android:id="@+id/textView_bildbereich"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="@string/Bildbereich"
+            tools:text="@string/Bildbereich" />
+
+        <RelativeLayout
+            android:layout_width="240dp"
+            android:layout_height="320dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="240dp"
+                android:layout_height="320dp"
+                android:layout_centerHorizontal="true"
+                android:foregroundGravity="clip_horizontal"
+                app:srcCompat="@android:color/black" />
+
+            <ImageView
+                android:id="@+id/imageView_lo"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:srcCompat="@android:color/holo_blue_bright" />
+
+            <ImageView
+                android:id="@+id/imageView_lu"
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                app:srcCompat="@android:color/holo_blue_bright" />
+
+            <ImageView
+                android:id="@+id/imageView_ru"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:srcCompat="@android:color/holo_blue_bright" />
+
+            <ImageView
+                android:id="@+id/imageView_ro"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:srcCompat="@android:color/holo_blue_bright" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button_Bildbereich"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Bildbereich_Button"
+            style="@style/btn_style"
+            android:layout_gravity="center"
+            />
+
+
+    </LinearLayout>
+
+
+</com.example.teamprojekt.CustomScrollView>
