@@ -46,7 +46,11 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -94,7 +98,7 @@ public class EinstellungenActivity extends AppCompatActivity {
     private final int BOTTOM_TOP_MARGIN = 320;
 
     //SharedPreferences Konstanten
-    private final String prefName = "MyPref";
+    private String prefName = "MyPref";
     private final String pref_automatischHochladen = "hochladen";
     private final String pref_anzahlBilder = "anzahlBilder";
     private final String pref_aufloesung_breite = "breite";
@@ -123,7 +127,7 @@ public class EinstellungenActivity extends AppCompatActivity {
 
 
     Context context;
-
+    String s = "https://drive.google.com/file/d/1xpILvnNnOeT0XmWEMeUuX96oyREmGqBp/view?usp=sharing";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,7 +198,12 @@ public class EinstellungenActivity extends AppCompatActivity {
         cameraSizes.setAdapter(adapter);
 
         //Speicherung
-        sharedPreferences = getSharedPreferences(prefName, 0);
+        if(!loggedIn){
+            sharedPreferences = getSharedPreferences(prefName, 0);
+        }else{
+            sharedPreferences = getSharedPreferences(prefName + account.getId(), 0);
+        }
+
 
 
         automatischHochladen.setChecked(sharedPreferences.getBoolean(pref_automatischHochladen, false));
@@ -298,6 +307,7 @@ public class EinstellungenActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 nummer.setText("" + anzahlBilder.getProgress() + " mal die Sekunde");
+
             }
 
             @Override
@@ -557,7 +567,11 @@ public class EinstellungenActivity extends AppCompatActivity {
         super.onStop();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(pref_anzahlBilder, anzahlBilder.getProgress());
+        if(anzahlBilder.getProgress()==0){
+            editor.putInt(pref_anzahlBilder, 1);
+        }else {
+            editor.putInt(pref_anzahlBilder, anzahlBilder.getProgress());
+        }
         editor.putInt(pref_aufloesung_breite, Integer.parseInt(gewaehlte_Aufloesung[0]));
         editor.putInt(pref_aufloesung_hoehe, Integer.parseInt(gewaehlte_Aufloesung[1]));
         editor.putInt(pref_aufloesung_position, aufloesung_Position);
@@ -621,13 +635,33 @@ public class EinstellungenActivity extends AppCompatActivity {
                                 .setApplicationName(applicationName)
                                 .build();
 
+                        sharedPreferences = getSharedPreferences(prefName + account.getId(), 0);
+                        googleDriveHelper = new GoogleDriveHelper(googleDriveService, sharedPreferences);
 
-                        googleDriveHelper = new GoogleDriveHelper(googleDriveService);
 
-                        googleDriveHelper.createFolder();
+                        ProgressDialog progressDialog = new ProgressDialog(EinstellungenActivity.this);
+                        progressDialog.setTitle("Uploading to Google Drive");
+                        progressDialog.setMessage("Please wait....");
+                        googleDriveHelper.createFolder().addOnSuccessListener(new OnSuccessListener<String>() {
+                            @Override
+                            public void onSuccess(String s) {
+                                progressDialog.dismiss();
+
+                                Toast.makeText(getApplicationContext(), "Uploaded Successfully", Toast.LENGTH_LONG).show();
+                            }
+                        })
+
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(), "Check your google Drive Api key", Toast.LENGTH_LONG).show();
+                                    }
+                                });
                         googleDriveHelper.createAnroidSubFolder();
                         googleDriveHelper.createIosSubFolder();
-                        googleDriveHelper.createFileInFolder();
+                        googleDriveHelper.createTrainingsdatenSubFolder();
+                        //googleDriveHelper.createFileInFolder();
                         //googleDriveHelper.createFileInFolder(googleDriveHelper.createFolder().toString());
 
                     } catch (ApiException e) {
@@ -637,6 +671,9 @@ public class EinstellungenActivity extends AppCompatActivity {
                     break;
             }
     }
+
+
+
 
 
 
@@ -665,10 +702,19 @@ public class EinstellungenActivity extends AppCompatActivity {
 
     private void checkLogedIn(){
         GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(this);
+
         if (alreadyloggedAccount != null) {
             loggedIn = true;
             switchLogtinLogoutButtons(alreadyloggedAccount);
             Toast.makeText(this, "Already Logged In", Toast.LENGTH_SHORT).show();
+            account = alreadyloggedAccount;
+            GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(EinstellungenActivity.this, Collections.singleton(DriveScopes.DRIVE_FILE));
+            credential.setSelectedAccount(account.getAccount());
+            Drive googleDriveService = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
+                    .setApplicationName(applicationName)
+                    .build();
+            sharedPreferences = getSharedPreferences(prefName + account.getId(), 0);
+            googleDriveHelper = new GoogleDriveHelper(googleDriveService, sharedPreferences);
             //onLoggedIn(alreadyloggedAccount);
         } else {
             Log.d(TAG, "Not logged in");
@@ -676,6 +722,8 @@ public class EinstellungenActivity extends AppCompatActivity {
             switchLogtinLogoutButtons();
         }
     }
+
+
 
     private void signOut(){
         Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();

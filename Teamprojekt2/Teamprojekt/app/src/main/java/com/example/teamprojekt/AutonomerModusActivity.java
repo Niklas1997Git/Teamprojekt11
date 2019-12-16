@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.tensorflow.lite.Interpreter;
 
 import java.io.FileInputStream;
@@ -34,15 +37,21 @@ public class AutonomerModusActivity extends AppCompatActivity {
 
     Interpreter tflite;
 
-    private final String prefName = "MyPref";
+    private String prefName = "MyPref";
     private final String pref_anzahlBilder = "anzahlBilder";
+
+    private GoogleSignInAccount checkLogedIn(){
+        GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(this);
+        prefName ="MyPref" + alreadyloggedAccount.getId();
+        return alreadyloggedAccount;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autonomer_modus);
         getSupportActionBar().setTitle("Autonomer Modus");
-
+        checkLogedIn();
         context=this;
         //TODO
         anzahlBilder = this.getSharedPreferences(prefName, 0).getInt(pref_anzahlBilder, 10);

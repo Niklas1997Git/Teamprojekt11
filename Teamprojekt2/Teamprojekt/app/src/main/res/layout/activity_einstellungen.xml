@@ -54,6 +54,21 @@
             android:text="TextView" />
 
 
+        <TextView
+            android:id="@+id/anweisung_googleDrive"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Erstellen Sie von dieser Datei eine Kopie in Ihrem Google Drive" />
+
+        <TextView
+            android:id="@+id/neuronalesetz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:gravity="center"
+            android:text="https://drive.google.com/file/d/1xpILvnNnOeT0XmWEMeUuX96oyREmGqBp/view?usp=sharing" />
 
         <TextView
             android:id="@+id/textView_WieOftBilder"
@@ -66,7 +81,8 @@
         <SeekBar
             android:id="@+id/seekBar_AnzahlBilder"
             android:layout_width="match_parent"
-            android:layout_height="35dp" />
+            android:layout_height="35dp"
+            android:max="20" />
 
         <TextView
             android:id="@+id/textView_AnzahlBilder"

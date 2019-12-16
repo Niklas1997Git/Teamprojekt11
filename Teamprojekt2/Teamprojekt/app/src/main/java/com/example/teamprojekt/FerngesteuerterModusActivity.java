@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,7 +43,7 @@ import java.util.zip.ZipOutputStream;
 public class FerngesteuerterModusActivity extends AppCompatActivity {
 
     private final int BOARD_PORT = 10001;
-    private final String prefName = "MyPref";
+    private String prefName = "MyPref";
     private final String pref_automatischHochladen = "hochladen";
     Camera camera;
     FrameLayout frameLayout;
@@ -64,6 +67,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
     UDPClientListen clientListen;
 
+    GoogleSignInAccount account;
     int counter;
     final File folder_json = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "JSON");
 
@@ -73,11 +77,19 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     private boolean isUserFinish = false;
 
 
+    private GoogleSignInAccount checkLogedIn(){
+        GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(this);
+        prefName ="MyPref" + alreadyloggedAccount.getId();
+        return alreadyloggedAccount;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ferngesteuerter_modus);
+        account = checkLogedIn();
+        System.out.println(account.getEmail());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(getSupportActionBar()).setTitle("Ferngesteuerter Modus");
         }
@@ -157,9 +169,6 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         //JSON-Datei erstellen und speichern
         saveJSONFile(s[0], s[1], s[2]);
         System.out.println("JSON gespeichert");
-        //updateWerte(s[0], s[1]);
-        //Texte Updaten
-        //TODO Ab und zu wird eine Exception geworfen
         lenkwinkel_string = s[0];
         geschwindigkeit_string = s[1];
         setText();

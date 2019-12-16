@@ -1,8 +1,10 @@
 package com.example.teamprojekt;
 
 
+import android.content.SharedPreferences;
 import android.os.Environment;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 
 import java.util.Collections;
@@ -20,13 +22,37 @@ public class GoogleDriveHelper {
     private  String projectFolderId = null;
     private  String iosFolderId = null;
     private  String androidFolderId = null;
+    private  String trainingsdatenFolderId = null;
     private  String nnFileId = null;
+
+    private final String pref_projectFolder = "projectFolder";
+    private final String pref_iosFolder = "iosFolder";
+    private final String pref_androidFolder = "androidFolder";
+    private final String pref_trainingsdatenFolder = "trainingsdatenFolder";
+    private final String pref_nnFile = "nnFile";
 
     private final Executor mExecutor = Executors.newSingleThreadExecutor();
     private Drive mDriveService;
+    SharedPreferences preferences;
 
-    public GoogleDriveHelper(Drive mDriveService){
+    public GoogleDriveHelper(Drive mDriveService, SharedPreferences pref){
         this.mDriveService = mDriveService;
+        preferences = pref;
+        loadIDs();
+    }
+
+
+    public void loadIDs(){
+        projectFolderId = preferences.getString(pref_projectFolder, null);
+        iosFolderId = preferences.getString(pref_iosFolder, null);
+        androidFolderId = preferences.getString(pref_androidFolder, null);
+        nnFileId = preferences.getString(pref_nnFile, null);
+        trainingsdatenFolderId = preferences.getString(pref_trainingsdatenFolder, null);
+        System.out.println(projectFolderId);
+        System.out.println(iosFolderId);
+        System.out.println(androidFolderId);
+        System.out.println(nnFileId);
+        System.out.println(trainingsdatenFolderId);
     }
 
     public Task<String> createFile(String filePath){
@@ -111,6 +137,7 @@ public class GoogleDriveHelper {
             fileMetadata.setName("photo.zip");
             fileMetadata.setParents(Collections.singletonList(projectFolderId));
             String path = Environment.getExternalStorageDirectory() + java.io.File.separator + "A_Project.zip";
+
             java.io.File filePath = new java.io.File(path);
             FileContent mediaContent = new FileContent("application/zip.zip", filePath);
             File file = mDriveService.files().create(fileMetadata, mediaContent)
@@ -126,7 +153,7 @@ public class GoogleDriveHelper {
         return Tasks.call(mExecutor, () ->{
             System.out.println("---------------CREATE PROJECTFOLDER-------------------");
             System.out.println("CREATE PROJECTFOLDER");
-            if(projectFolderId !=null){
+            if(projectFolderId != null){
                 System.out.println("PROJECTFOLDER != NULL");
                 if(folderExists(projectFolderId).equals("true")){
                     System.out.println("PROJECTFOLDER EXISTS");
@@ -135,7 +162,7 @@ public class GoogleDriveHelper {
             }else{
                 System.out.println("PROJECTFOLDER DOES NOT EXISTS");
                 File fileMetadata = new File();;
-                fileMetadata.setName("Project Ordner");
+                fileMetadata.setName("Auto");
                 fileMetadata.setMimeType("application/vnd.google-apps.folder");
 
                 // For mime type of specific file visit Drive Doucumentation
@@ -143,6 +170,9 @@ public class GoogleDriveHelper {
                         .setFields("id")
                         .execute();
                 projectFolderId = file.getId();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(pref_projectFolder, projectFolderId);
+                editor.commit();
                 System.out.println("PROJECTFOLDER CREATED");
                 System.out.println("---------------CREATE PROJECTFOLDER-------------------");
                 return  file.getId();
@@ -173,6 +203,9 @@ public class GoogleDriveHelper {
                         .setFields("id, parents")
                         .execute();
                 androidFolderId = file.getId();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(pref_androidFolder, androidFolderId);
+                editor.commit();
                 System.out.println("ANDROIDFOLDER CREATED");
                 System.out.println("---------------CREATE ANDROIDFOLDER-------------------");
                 return  file.getId();
@@ -187,7 +220,6 @@ public class GoogleDriveHelper {
     public Task<String> createIosSubFolder(){
         return Tasks.call(mExecutor, () ->{
             System.out.println("---------------CREATE IOSFOLDER-------------------");
-            System.out.println("CREATE FOLDER");
             if(iosFolderId !=null){
                 System.out.println("IOSFOLDER != NULL");
                 if(folderExists(iosFolderId).equals("true")){
@@ -206,11 +238,47 @@ public class GoogleDriveHelper {
                         .setFields("id, parents")
                         .execute();
                 iosFolderId = file.getId();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(pref_iosFolder, iosFolderId);
+                editor.commit();
                 System.out.println("IOSFOLDER CREATED");
                 System.out.println("---------------CREATE IOSFOLDER-------------------");
                 return  file.getId();
             }
             System.out.println("---------------CREATE IOSFOLDER-------------------");
+            return  null;
+        });
+    }
+
+    public Task<String> createTrainingsdatenSubFolder(){
+        return Tasks.call(mExecutor, () ->{
+            System.out.println("---------------CREATE TRAININGSDATENFOLDER-------------------");
+            if(trainingsdatenFolderId !=null){
+                System.out.println("TRAININGSDATENFOLDER != NULL");
+                if(folderExists(trainingsdatenFolderId).equals("true")){
+                    System.out.println("TRAININGSDATENFOLDER EXISTS");
+                    return trainingsdatenFolderId;
+                }
+            }else{
+                System.out.println("TRAININGSDATENFOLDER DOES NOT EXISTS");
+                File fileMetadata = new File();;
+                fileMetadata.setName("Trainingsdaten");
+                fileMetadata.setParents(Collections.singletonList(projectFolderId));
+                fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+                // For mime type of specific file visit Drive Doucumentation
+                File file = mDriveService.files().create(fileMetadata)
+                        .setFields("id, parents")
+                        .execute();
+                trainingsdatenFolderId = file.getId();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(pref_trainingsdatenFolder, trainingsdatenFolderId);
+                editor.commit();
+                System.out.println("TRAININGSDATENFOLDER CREATED");
+                System.out.println("---------------CREATE TRAININGSDATENFOLDER-------------------");
+                return  file.getId();
+            }
+            System.out.println("---------------CREATE TRAININGSDATENFOLDER-------------------");
             return  null;
         });
     }
