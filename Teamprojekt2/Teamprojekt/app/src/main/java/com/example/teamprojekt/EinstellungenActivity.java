@@ -74,6 +74,9 @@ public class EinstellungenActivity extends AppCompatActivity {
     private Spinner cameraSizes;
     private CustomScrollView customScrollView;
     private Button button_Bildbereich;
+    private com.google.android.material.textfield.TextInputEditText editText_boardPort;
+    private com.google.android.material.textfield.TextInputEditText editText_appPort;
+    private com.google.android.material.textfield.TextInputEditText editText_ipAdresse;
 
     //Rechteck deklarierung
     private ImageView rechteckLinksOben;
@@ -104,6 +107,10 @@ public class EinstellungenActivity extends AppCompatActivity {
     private final String pref_aufloesung_breite = "breite";
     private final String pref_aufloesung_hoehe = "hoehe";
     private final String pref_aufloesung_position = "position";
+
+    private final String pref_boardPort = "boardPort";
+    private final String pref_appPort = "appPort";
+    private final String pref_ipAdresse = "ipAdresse";
     private final String pref_left_faktor = "left_faktor";
     private final String pref_top_faktor = "top_faktor";
 
@@ -121,6 +128,9 @@ public class EinstellungenActivity extends AppCompatActivity {
 
     private String[] gewaehlte_Aufloesung;
     private int aufloesung_Position = 0;
+    private int boardPort;
+    private int appPort;
+    private String ipAdresse;
 
     //Kamera-auflösungen für die Auswahl
     private String[] supportedCameraSizes;
@@ -178,6 +188,9 @@ public class EinstellungenActivity extends AppCompatActivity {
         cameraSizes = findViewById(R.id.spinner_aufloesung);
         customScrollView = findViewById(R.id.customScrollView);
         button_Bildbereich = findViewById(R.id.button_Bildbereich);
+        editText_boardPort = findViewById(R.id.boardPort);
+        editText_appPort = findViewById(R.id.appPort);
+        editText_ipAdresse = findViewById(R.id.ipAdresse);
 
 
         ImageView bild = findViewById(R.id.imageView4);
@@ -205,7 +218,9 @@ public class EinstellungenActivity extends AppCompatActivity {
         }
 
 
+        //Update GUI
 
+        /*
         automatischHochladen.setChecked(sharedPreferences.getBoolean(pref_automatischHochladen, false));
         int progress = sharedPreferences.getInt(pref_anzahlBilder, 10);
         //Werte aus Speicherung setzen
@@ -215,7 +230,7 @@ public class EinstellungenActivity extends AppCompatActivity {
         nummer.setText("" + progress + " mal die Sekunde");
         aufloesung_Position = sharedPreferences.getInt(pref_aufloesung_position, 0);
         cameraSizes.setSelection(aufloesung_Position);
-
+        */
 
         rechteckLinksOben.setOnTouchListener(onTouchListener());
         rechteckLinksUnten.setOnTouchListener(onTouchListener());
@@ -239,7 +254,8 @@ public class EinstellungenActivity extends AppCompatActivity {
         rechteckRechtsOben.getLayoutParams().width = SQUARE_SIZE;
         rechteckRechtsOben.requestLayout();
 
-
+        updateGUI();
+        /*
         //ImageView Startwerte setzen
         //Links oben
         RelativeLayout.LayoutParams lp_lo = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
@@ -272,6 +288,8 @@ public class EinstellungenActivity extends AppCompatActivity {
         lp_ro.rightMargin = STANDARD_MARGIN;
         lp_ro.bottomMargin = STANDARD_MARGIN;
         rechteckRechtsOben.setLayoutParams(lp_ro);
+        */
+
 
 
         button_Bildbereich.setOnClickListener(new View.OnClickListener() {
@@ -333,6 +351,57 @@ public class EinstellungenActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void updateGUI(){
+        automatischHochladen.setChecked(sharedPreferences.getBoolean(pref_automatischHochladen, false));
+        int progress = sharedPreferences.getInt(pref_anzahlBilder, 10);
+        //Werte aus Speicherung setzen
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            anzahlBilder.setProgress(progress, true);
+        }
+
+        nummer.setText("" + progress + " mal die Sekunde");
+        aufloesung_Position = sharedPreferences.getInt(pref_aufloesung_position, 0);
+        cameraSizes.setSelection(aufloesung_Position);
+        appPort = sharedPreferences.getInt(pref_appPort,10000);
+        editText_appPort.setText("" + appPort);
+        boardPort = sharedPreferences.getInt(pref_boardPort, 10001);
+        editText_boardPort.setText("" + boardPort);
+        editText_ipAdresse.setText(sharedPreferences.getString(pref_ipAdresse, ""));
+
+        //ImageView Startwerte setzen
+        //Links oben
+        RelativeLayout.LayoutParams lp_lo = (RelativeLayout.LayoutParams) rechteckLinksOben.getLayoutParams();
+        lp_lo.leftMargin = sharedPreferences.getInt(pref_lo_left, LEFT_LEFT_MARGIN);
+        lp_lo.topMargin = sharedPreferences.getInt(pref_lo_top, TOP_TOP_MARGIN);
+        lp_lo.rightMargin = STANDARD_MARGIN;
+        lp_lo.bottomMargin = STANDARD_MARGIN;
+        rechteckLinksOben.setLayoutParams(lp_lo);
+
+        //Links unten
+        RelativeLayout.LayoutParams lp_lu = (RelativeLayout.LayoutParams) rechteckLinksUnten.getLayoutParams();
+        lp_lu.leftMargin = sharedPreferences.getInt(pref_lu_left, LEFT_LEFT_MARGIN);
+        lp_lu.topMargin = sharedPreferences.getInt(pref_lu_top, BOTTOM_TOP_MARGIN);
+        lp_lu.rightMargin = STANDARD_MARGIN;
+        lp_lu.bottomMargin = STANDARD_MARGIN;
+        rechteckLinksUnten.setLayoutParams(lp_lu);
+
+        //Rechts unten
+        RelativeLayout.LayoutParams lp_ru = (RelativeLayout.LayoutParams) rechteckRechtsUnten.getLayoutParams();
+        lp_ru.leftMargin = sharedPreferences.getInt(pref_ru_left, RIGHT_LEFT_MARGIN);
+        lp_ru.topMargin = sharedPreferences.getInt(pref_ru_top, BOTTOM_TOP_MARGIN);
+        lp_ru.rightMargin = STANDARD_MARGIN;
+        lp_ru.bottomMargin = STANDARD_MARGIN;
+        rechteckRechtsUnten.setLayoutParams(lp_ru);
+
+        //Rechts oben
+        RelativeLayout.LayoutParams lp_ro = (RelativeLayout.LayoutParams) rechteckRechtsOben.getLayoutParams();
+        lp_ro.leftMargin = sharedPreferences.getInt(pref_ro_left, RIGHT_LEFT_MARGIN);
+        lp_ro.topMargin = sharedPreferences.getInt(pref_ro_top, TOP_TOP_MARGIN);
+        lp_ro.rightMargin = STANDARD_MARGIN;
+        lp_ro.bottomMargin = STANDARD_MARGIN;
+        rechteckRechtsOben.setLayoutParams(lp_ro);
     }
 
     View.OnLongClickListener longclckListener = new View.OnLongClickListener() {
@@ -572,6 +641,14 @@ public class EinstellungenActivity extends AppCompatActivity {
         }else {
             editor.putInt(pref_anzahlBilder, anzahlBilder.getProgress());
         }
+        if(!editText_boardPort.getText().toString().equals("")){
+            editor.putInt(pref_boardPort, Integer.parseInt(editText_boardPort.getText().toString()));
+        }
+        if(!editText_appPort.getText().toString().equals("")){
+            editor.putInt(pref_appPort, Integer.parseInt(editText_appPort.getText().toString()));
+        }
+        editor.putString(pref_ipAdresse, editText_ipAdresse.getText().toString());
+
         editor.putInt(pref_aufloesung_breite, Integer.parseInt(gewaehlte_Aufloesung[0]));
         editor.putInt(pref_aufloesung_hoehe, Integer.parseInt(gewaehlte_Aufloesung[1]));
         editor.putInt(pref_aufloesung_position, aufloesung_Position);
@@ -728,6 +805,7 @@ public class EinstellungenActivity extends AppCompatActivity {
     private void signOut(){
         Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
         loggedIn = false;
+        sharedPreferences = getSharedPreferences(prefName, 0);
         switchLogtinLogoutButtons();
     }
 

@@ -1,9 +1,12 @@
 package com.example.teamprojekt;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +25,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,18 +43,25 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static com.example.teamprojekt.EinstellungenActivity.googleDriveHelper;
+
 
 public class FerngesteuerterModusActivity extends AppCompatActivity {
 
-    private final int BOARD_PORT = 10001;
+    private  int BOARD_PORT = 10001;
     private String prefName = "MyPref";
     private final String pref_automatischHochladen = "hochladen";
+    private final String pref_boardPort = "boardPort";
+    boolean automatischHochladen = true;
     Camera camera;
     FrameLayout frameLayout;
     ShowCamera showCamera;
@@ -65,9 +82,16 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
     Button bilderAufnehmenButton;
 
-    UDPClientListen clientListen;
+    SharedPreferences preferences;
 
+    UDPClientListen clientListen;
+    String nachricht ="";
+    String[] nachrichtWerte = new String[2];
     GoogleSignInAccount account;
+    private String applicationName = "Teamprojekt";
+
+    Calendar kalender;
+    SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
     int counter;
     final File folder_json = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project" + File.separator + "JSON");
 
@@ -80,6 +104,14 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
     private GoogleSignInAccount checkLogedIn(){
         GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(this);
         prefName ="MyPref" + alreadyloggedAccount.getId();
+        preferences = getSharedPreferences(prefName, 0);
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(FerngesteuerterModusActivity.this, Collections.singleton(DriveScopes.DRIVE_FILE));
+        credential.setSelectedAccount(alreadyloggedAccount.getAccount());
+        Drive googleDriveService = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
+                .setApplicationName(applicationName)
+                .build();
+        googleDriveHelper = new GoogleDriveHelper(googleDriveService, preferences);
+
         return alreadyloggedAccount;
     }
 
@@ -93,6 +125,9 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(getSupportActionBar()).setTitle("Ferngesteuerter Modus");
         }
+
+        BOARD_PORT = preferences.getInt(pref_boardPort, 10001);
+        automatischHochladen = preferences.getBoolean(pref_automatischHochladen, true);
 
         lenkwinkelText = findViewById(R.id.textView8);
         geschwindigkeitText = findViewById(R.id.textView9);
@@ -119,7 +154,8 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         showCamera = new ShowCamera(this, camera);
         frameLayout.addView(showCamera);
 
-        clientListen = new UDPClientListen(BOARD_PORT);
+
+        clientListen = new UDPClientListen(BOARD_PORT, nachrichtWerte);
     }
 
 
@@ -147,10 +183,44 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             }
         }, 0, 1000L / 10L);
 
+
+
         new Handler().postDelayed(() -> zipFileAtPath(
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project",
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
+
+        uploadFile();
+
+
+    }
+
+    public  void uploadFile(){
+        ProgressDialog progressDialog = new ProgressDialog(FerngesteuerterModusActivity.this);
+        progressDialog.setTitle("Uploading to Google Drive");
+        progressDialog.setMessage("Please wait....");
+
+
+
+        String filePath = Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip";
+
+
+        googleDriveHelper.createFileInFolder().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                progressDialog.dismiss();
+
+                Toast.makeText(getApplicationContext(), "Uploaded Successfully", Toast.LENGTH_LONG).show();
+            }
+        })
+
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Konnte nicht hochgeladen werden", Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     private void setText(){
@@ -162,8 +232,14 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         System.out.println("Bild aufgenommen");
         //Daten vom Board empfangen
         clientListen.run();
-        //TODO UDP-Nachricht verarbeiten
+        //TODO UDP-Nachricht verarbeiten in String nachricht entahlten
 
+        System.out.println(nachricht);
+        //System.out.println(getWertJSON(nachricht,"steering"));
+        lenkwinkel_string = nachrichtWerte[0];
+        geschwindigkeit_string = nachrichtWerte[1];
+        saveJSONFile(lenkwinkel_string, geschwindigkeit_string);
+        /*
         //Teststring zur Erstellung einer json datei
         String[] s = {"90", "50", "Time"};
         //JSON-Datei erstellen und speichern
@@ -171,13 +247,41 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         System.out.println("JSON gespeichert");
         lenkwinkel_string = s[0];
         geschwindigkeit_string = s[1];
+         */
         setText();
+
+    }
+
+    private String getWertJSON(String json, String wert){
+        System.out.println("_____________getWert_____________");
+        System.out.println(json);
+        String value = "";
+        String[] eintraege = json.split(",");
+        System.out.println(eintraege.toString());
+        for(String eintrag: eintraege){
+            System.out.println(eintrag);
+            System.out.println("------------enthält wert nicht------------");
+            if(eintrag.contains(wert)){
+                System.out.println("------------enthält wert------------");
+                String[] wertEintrag = eintrag.split(":");
+                System.out.println(wertEintrag.toString());
+                if(wertEintrag[1].contains("}")){
+                    wertEintrag[1].replace("}","");
+                    value = wertEintrag[1];
+                }
+                System.out.println("_____________getWert_____________");
+                return  wertEintrag[1];
+            }
+        }
+        System.out.println("_____________getWert_____________");
+        return value;
     }
 
     //Updaten der Texte in der Szene
     private void updateWerte(String lenkwert, String geschwindigkeit){
         lenkwinkelText.setText("Lenkwinkel: " + lenkwert);
         geschwindigkeitText.setText("Geschwindigkeit: " + geschwindigkeit);
+        /*
         int winkel = Integer.parseInt(lenkwert);
         if(winkel < 90){
             lenkrichtungText.setText("Lenkrichtung: Links");
@@ -186,6 +290,8 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
         }else{
             lenkrichtungText.setText("Lenkrichtung: Geradeaus");
         }
+
+         */
     }
 
 
@@ -221,6 +327,40 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    int jsonCounter=0;
+    private void saveJSONFile(String steering, String throttle) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("steering", steering);
+            jsonObject.put("throttle", throttle);
+            //jsonObject.put("image", datei_name+".jpg");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String state = Environment.getExternalStorageState();
+        if(!state.equals(Environment.MEDIA_MOUNTED)){
+            return;
+        }else {
+            //JSON Ordner erstellen, falls noch nicht vorhanden
+            if (!folder_json.exists()) {
+                folder_json.mkdirs();
+
+            }
+            try {
+                //JSON-Datei speichern
+                File jsonFile = new File(folder_json, datei_name + ".json");
+                //File jsonFile = new File(folder_json, jsonCounter + ".json");
+                FileWriter fileWriter = new FileWriter(jsonFile);
+                fileWriter.write(jsonObject.toString());
+                System.out.println("gespeichert");
+                //jsonCounter++;
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

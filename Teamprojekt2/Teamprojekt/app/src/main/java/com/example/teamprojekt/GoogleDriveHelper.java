@@ -7,6 +7,8 @@ import android.os.Environment;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -34,6 +36,9 @@ public class GoogleDriveHelper {
     private final Executor mExecutor = Executors.newSingleThreadExecutor();
     private Drive mDriveService;
     SharedPreferences preferences;
+
+    Calendar kalender;
+    SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
 
     public GoogleDriveHelper(Drive mDriveService, SharedPreferences pref){
         this.mDriveService = mDriveService;
@@ -86,8 +91,10 @@ public class GoogleDriveHelper {
         });
 */
 
+            kalender = Calendar.getInstance();
+            String zipName = datumsformat.format(kalender.getTime());
             File fileMetadata = new File();;
-            fileMetadata.setName("A_Project");
+            fileMetadata.setName("Trainingsdaten-"+zipName);
             fileMetadata.setMimeType("application/zip");
 
             // For mime type of specific file visit Drive Doucumentation
@@ -132,10 +139,16 @@ public class GoogleDriveHelper {
                 System.out.println("CREATE PROJECTFOLDER");
                 projectFolderId = createFolder().toString();
             }
+            if(folderExists(trainingsdatenFolderId).equals("false")){
+                System.out.println("CREATE TRAININGSDATENFOLDER");
+                trainingsdatenFolderId = createTrainingsdatenSubFolder().toString();
+            }
             System.out.println("CreateFileInFolder");
-            File fileMetadata = new File();
-            fileMetadata.setName("photo.zip");
-            fileMetadata.setParents(Collections.singletonList(projectFolderId));
+            kalender = Calendar.getInstance();
+            String zipName = datumsformat.format(kalender.getTime());
+            File fileMetadata = new File();;
+            fileMetadata.setName("Trainingsdaten-"+zipName+".zip");
+            fileMetadata.setParents(Collections.singletonList(trainingsdatenFolderId));
             String path = Environment.getExternalStorageDirectory() + java.io.File.separator + "A_Project.zip";
 
             java.io.File filePath = new java.io.File(path);
