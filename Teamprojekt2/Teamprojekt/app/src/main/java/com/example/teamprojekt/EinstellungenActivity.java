@@ -74,6 +74,7 @@ public class EinstellungenActivity extends AppCompatActivity {
     private Spinner cameraSizes;
     private CustomScrollView customScrollView;
     private Button button_Bildbereich;
+    private Button button_hochladen;
     private com.google.android.material.textfield.TextInputEditText editText_boardPort;
     private com.google.android.material.textfield.TextInputEditText editText_appPort;
     private com.google.android.material.textfield.TextInputEditText editText_ipAdresse;
@@ -188,6 +189,7 @@ public class EinstellungenActivity extends AppCompatActivity {
         cameraSizes = findViewById(R.id.spinner_aufloesung);
         customScrollView = findViewById(R.id.customScrollView);
         button_Bildbereich = findViewById(R.id.button_Bildbereich);
+        button_hochladen = findViewById(R.id.trainigsdatenHochladen);
         editText_boardPort = findViewById(R.id.boardPort);
         editText_appPort = findViewById(R.id.appPort);
         editText_ipAdresse = findViewById(R.id.ipAdresse);
@@ -255,6 +257,10 @@ public class EinstellungenActivity extends AppCompatActivity {
         rechteckRechtsOben.requestLayout();
 
         updateGUI();
+        if(googleDriveHelper!=null){
+            searchTfliteFiles();
+        }
+
         /*
         //ImageView Startwerte setzen
         //Links oben
@@ -351,6 +357,26 @@ public class EinstellungenActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    private void searchTfliteFiles(){
+        System.out.println("-------------SEARCH TFLITE----------");
+        googleDriveHelper.tensorflowFiles().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+
+                //Toast.makeText(getApplicationContext(), "Uploaded Successfully", Toast.LENGTH_LONG).show();
+                System.out.println("File Namen:");
+                for(String s1:googleDriveHelper.getNamen()){
+                    System.out.println(s1);
+                }
+
+                System.out.println("-------------SEARCH TFLITE----------");
+            }
+        });
+
+
     }
 
     private void updateGUI(){
@@ -670,7 +696,7 @@ public class EinstellungenActivity extends AppCompatActivity {
         String filePath = Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip";
 
 
-        googleDriveHelper.createFile(filePath).addOnSuccessListener(new OnSuccessListener<String>() {
+        googleDriveHelper.createFileInFolder().addOnSuccessListener(new OnSuccessListener<String>() {
             @Override
             public void onSuccess(String s) {
                 progressDialog.dismiss();
@@ -704,7 +730,7 @@ public class EinstellungenActivity extends AppCompatActivity {
                         loggedIn = true;
                         switchLogtinLogoutButtons(account);
 
-                        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(EinstellungenActivity.this, Collections.singleton(DriveScopes.DRIVE_FILE));
+                        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(EinstellungenActivity.this, Collections.singleton(DriveScopes.DRIVE));
 
                         credential.setSelectedAccount(account.getAccount());
 
@@ -714,7 +740,7 @@ public class EinstellungenActivity extends AppCompatActivity {
 
                         sharedPreferences = getSharedPreferences(prefName + account.getId(), 0);
                         googleDriveHelper = new GoogleDriveHelper(googleDriveService, sharedPreferences);
-
+                        searchTfliteFiles();
 
                         ProgressDialog progressDialog = new ProgressDialog(EinstellungenActivity.this);
                         progressDialog.setTitle("Uploading to Google Drive");
@@ -815,10 +841,22 @@ public class EinstellungenActivity extends AppCompatActivity {
             signOut.setVisibility(View.VISIBLE);
             googleSignInButton.setVisibility(View.GONE);
             account_email_textView.setVisibility(View.VISIBLE);
+            findViewById(R.id.trainigsdatenHochladen).setVisibility(View.VISIBLE);
+            File f = new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip");
+            if(!f.exists()){
+                findViewById(R.id.trainigsdatenHochladen).setEnabled(false);
+                System.out.println("File not");
+            }else{
+                findViewById(R.id.trainigsdatenHochladen).setEnabled(true);
+                System.out.println("File");
+
+            }
         }else {
             signOut.setVisibility(View.GONE);
             googleSignInButton.setVisibility(View.VISIBLE);
             account_email_textView.setVisibility(View.GONE);
+            findViewById(R.id.trainigsdatenHochladen).setVisibility(View.GONE);
+            //button_hochladen.setVisibility(View.GONE);
         }
     }
 

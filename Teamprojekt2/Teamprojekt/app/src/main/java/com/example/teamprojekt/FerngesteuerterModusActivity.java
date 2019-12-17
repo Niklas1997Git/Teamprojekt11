@@ -190,8 +190,14 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
                 Environment.getExternalStorageDirectory() + File.separator + "A_Project.zip"),
                 1000); // Millisecond 1000 = 1 sec
 
-        uploadFile();
+        if(automatischHochladen){
+            uploadFile();
+        }else{
+            HochladenDialog hochladenDialog = new HochladenDialog();
+            hochladenDialog.show(getSupportFragmentManager(), "Hochladen");
+        }
 
+        deleteRecursive(new File(Environment.getExternalStorageDirectory() + File.separator + "A_Project"));
 
     }
 
@@ -457,7 +463,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
 
 
     //Ordner löschen
-    void DeleteRecursive(File dir)
+    void deleteRecursive(File dir)
     {
         System.out.println("DELETEPREVIOUS TOP");
         //Log.d("DeleteRecursive", "DELETEPREVIOUS TOP" + dir.getPath());
@@ -471,7 +477,7 @@ public class FerngesteuerterModusActivity extends AppCompatActivity {
                 {
                     System.out.println("Recursive Call");
                     //Log.d("DeleteRecursive", "Recursive Call" + temp.getPath());
-                    DeleteRecursive(temp);
+                    deleteRecursive(temp);
                 }
                 else
                 {

@@ -40,12 +40,21 @@ public class GoogleDriveHelper {
     Calendar kalender;
     SimpleDateFormat datumsformat = new SimpleDateFormat("dd.MM.yyyy-HH:mm:ss");
 
+    String[] namen;
+    String[] ids;
     public GoogleDriveHelper(Drive mDriveService, SharedPreferences pref){
         this.mDriveService = mDriveService;
         preferences = pref;
         loadIDs();
     }
 
+    public String[] getNamen() {
+        return namen;
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
 
     public void loadIDs(){
         projectFolderId = preferences.getString(pref_projectFolder, null);
@@ -63,33 +72,6 @@ public class GoogleDriveHelper {
     public Task<String> createFile(String filePath){
         return Tasks.call(mExecutor, () ->{
 
-/*
-            File fileMetaData = new File()
-                    .setName("MyPDF")
-                    .setParents(Collections.singletonList("root"));
-
-            java.io.File file = new java.io.File(filePath);
-
-            FileContent mediaContent = new FileContent("image/jpeg", file);
-
-            File myFile = null;
-
-            try{
-                myFile = mDriveService.files().create(fileMetaData, mediaContent).execute();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-
-            if(myFile==null){
-                throw new IOException("Null result when requesting file creation");
-            }
-
-
-            return myFile.getId();
-
-        });
-*/
 
             kalender = Calendar.getInstance();
             String zipName = datumsformat.format(kalender.getTime());
@@ -110,22 +92,6 @@ public class GoogleDriveHelper {
 
             return  file.getId();
 
-            /*
-        File metadata = new File()
-                .setParents(Collections.singletonList("root"))
-                .setMimeType("text/plain")
-                .setName("Untitled file");
-
-
-
-                File googleFile = mDriveService.files().create(metadata).execute();
-                if (googleFile == null) {
-                    throw new IOException("Null result when requesting file creation.");
-                }
-
-                return googleFile.getId();
-
-             */
         });
 
 
@@ -147,7 +113,9 @@ public class GoogleDriveHelper {
             kalender = Calendar.getInstance();
             String zipName = datumsformat.format(kalender.getTime());
             File fileMetadata = new File();;
-            fileMetadata.setName("Trainingsdaten-"+zipName+".zip");
+            fileMetadata.setName("Trainingsdaten-"+zipName);
+
+            fileMetadata.setMimeType("application/zip");
             fileMetadata.setParents(Collections.singletonList(trainingsdatenFolderId));
             String path = Environment.getExternalStorageDirectory() + java.io.File.separator + "A_Project.zip";
 
@@ -323,8 +291,44 @@ public class GoogleDriveHelper {
             System.out.println("----------------FOLDER EXISTS--------------------");
             return  "false";
         });
+    }
 
+    public Task<String> tensorflowFiles(){
+        return Tasks.call(mExecutor, () ->{
+            System.out.println("----------------TensorFlow--------------------");
+            String dateien = "";
+            String pageToken = null;
+            do {
+                System.out.println("----------------DOSChleife--------------------");
+                FileList result = mDriveService.files().list()
+                        //.setQ("mimeType != 'application/vnd.google-apps.folder'")
+                        .setSpaces("drive")
+                        .setCorpora("user")
+                        .setFields("nextPageToken, files(id, name)")
+                        .setPageToken(pageToken)
+                        .execute();
+                namen = new String[result.getFiles().size()];
+                ids = new String[result.getFiles().size()];
+                for (File file : result.getFiles()) {
+                    System.out.println("----------------1 For--------------------");
+                    System.out.printf("Found file: %s (%s)\n",
+                            file.getName(), file.getId());
 
-
+                }
+                for(int i=0;i<result.getFiles().size(); i++){
+                    System.out.println("----------------2 FOr--------------------");
+                    namen[i] = result.getFiles().get(i).getName();
+                    ids[i] = result.getFiles().get(i).getId();
+                    if(i==0){
+                        dateien = dateien + result.getFiles().get(i).getId();
+                    }else{
+                        dateien = dateien + ", " + result.getFiles().get(i).getId();
+                    }
+                }
+                pageToken = result.getNextPageToken();
+            } while (pageToken != null);
+            System.out.println("----------------TensorFlow--------------------");
+            return  dateien;
+        });
     }
 }

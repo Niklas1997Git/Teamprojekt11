@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -39,6 +40,7 @@ public class AutonomerModusActivity extends AppCompatActivity {
 
     private String prefName = "MyPref";
     private final String pref_anzahlBilder = "anzahlBilder";
+    private String filename = null;
 
     private GoogleSignInAccount checkLogedIn(){
         GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(this);
@@ -83,20 +85,24 @@ public class AutonomerModusActivity extends AppCompatActivity {
 
     public void startStopFahren(View view){
         //Schaltet die Reihenaufnahme ein oder aus
-        takePicturesAutonom.captureImageAutonom(cameraBildFramelayout);
-        /*
-        startStopFahren = !startStopFahren;
-        if(startStopFahren){
-            startStopButton.setText("Stop");
-            autonomesFahren();
-        }else {
-            startStopButton.setText("Start");
+        //takePicturesAutonom.captureImageAutonom(cameraBildFramelayout);
+        if(filename != null){
+            startStopFahren = !startStopFahren;
+            if(startStopFahren){
+                startStopButton.setText("Stop");
+                autonomesFahren();
+            }else {
+                startStopButton.setText("Start");
+            }
+        }else{
+            Toast.makeText(AutonomerModusActivity.this,
+                    "Es muss erst ein Neuronales Netz ausgewählt werden", Toast.LENGTH_LONG)
+                    .show();
         }
-        */
     }
 
     private MappedByteBuffer loadModelFile() throws IOException {
-        AssetFileDescriptor fileDescriptor = this.getAssets().openFd("Filename");
+        AssetFileDescriptor fileDescriptor = this.getAssets().openFd(filename);
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
         FileChannel fileChannel = inputStream.getChannel();
         long startOffset = fileDescriptor.getStartOffset();

@@ -112,9 +112,9 @@ public class TakePicturesFerngesteuert {
             //Kalender für Zeitabfrage erstellen
             kalender = Calendar.getInstance();
             //Uhrzeit weitergeben für die Erstellung der .json-Datei
-            FerngesteuerterModusActivity.datei_name = datumsformat.format(kalender.getTime());
+            FerngesteuerterModusActivity.datei_name = "train-"+datumsformat.format(kalender.getTime());
             //Bilddatei benennen
-            File outputFile = new File(folder_gui,  datumsformat.format(kalender.getTime()) + ".jpg");
+            File outputFile = new File(folder_gui,  "train-"+datumsformat.format(kalender.getTime()) + ".jpg");
             return outputFile;
         }
     }

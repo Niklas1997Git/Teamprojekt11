@@ -67,6 +67,9 @@ public class UDPClientListen implements Runnable {
     }
 
     private String getWertJSON(String json, String wert){
+        if(json ==null||wert == null){
+            return"";
+        }
         System.out.println("_____________getWert_____________");
         System.out.println(json);
         String value = "";
